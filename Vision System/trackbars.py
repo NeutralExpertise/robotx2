@@ -7,9 +7,7 @@ class Trackbars():
 
     def on_value_change(self, val):
             pass
-        
-
-
+    
     def create_window(self):
         self.is_active = True
         cv2.namedWindow("Parameters")
