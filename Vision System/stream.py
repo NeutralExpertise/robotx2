@@ -1,78 +1,67 @@
 import cv2
-
+import keyboard
+from stream_settings import Stream_Settings
 from stream_types import Stream_Types
 
-
-class Stream():
-
-    
-
-    def __init__(self, stream_type, path=None, cameraID = 0):
-        if(stream_type.name not in Stream_Types.__members__):
-            raise Exception("ERROR: Invalid Stream Type")
-        self.path = path
-        self.cameraID = cameraID
-        self.stream_type = stream_type
-
-        
-
-    # Set the stream type (Video, Image, Camera Stream etc...)
-    def set_type(self, new_type):
-        self.stream_type = new_type
-
-    # Get the stream type
-    def get_type(self):
-        return self.stream_type
+class Stream(Stream_Settings):
 
 
-    '''
-    Start up a stream according to the stream type
 
-    Params: vision_mode = Determines if the stream captures unique specifications (such as edge detecting or colour detector or both)
-    
-    '''
-    def stream(self, vision_mode = None):
-        # Stream is camera
+    def stream(self):
+        # Stream is a camera
         if(self.stream_type == Stream_Types.CAMERA):
-            self.stream_type = cv2.VideoCapture(self.cameraID)
+            
+            cap = cv2.VideoCapture(self.cameraID)
+            if(cap.isOpened() == False):
+                print("ERROR: No Camera Found!")
+                return
             delay = 1
             while True:
-                self.stream_cap = self.stream_type.read()[1]
-                if(vision_mode != None):
-                    vision_mode()
-                cv2.imshow("CAMERA VIEW ", self.stream_cap)
-                # Quit if 'q' is presssed
-                if cv2.waitKey(delay) & 0xFF ==ord('q'):
+                self.stream_cap = cap.read()[1]
+                self.original_cap = self.stream_cap
+                if(len(self.vision_modes) > 0):
+                    self.run_vision_modes()
+                   
+                cv2.imshow("CAMERA VIEW ", self.original_cap)
+                if cv2.waitKey(delay) and keyboard.is_pressed("q"):
                     break
-        
+                          
         # Stream is a static image
         elif(self.stream_type == Stream_Types.IMAGE):
-            try:
-                self.stream_type = cv2.imread(self.path)
-                delay = 0
-                # if(vision_method != None):
-                #     vision_method()
-                cv2.imshow("IMAGE VIEW", self.stream_type)
-                cv2.waitKey(delay)
-            except Exception as e:
-                print(e)
+            while True:
+                try:
+                    cap = cv2.imread(self.path)
+                    self.stream_cap = cap
+                    self.original_cap = cap
+                    if(len(self.vision_modes) > 0):
+                        self.run_vision_modes()
+                    delay = 1
+                    cv2.imshow("IMAGE VIEW", self.original_cap)
+                    # cv2.waitKey(0)
+                    if cv2.waitKey(delay) and keyboard.is_pressed("q"):
+                         break
+                except Exception as e:
+                    print(e)
+                    return
                 
         # Stream is a video (.mp4, .wav etc..)
         elif(self.stream_type == Stream_Types.VIDEO):
             try:
-                self.stream_type = cv2.VideoCapture(self.path)
-                self.stream_type = self.stream_type.read()[1]
+                cap = cv2.VideoCapture(self.path)
+                self.stream_cap = cap.read()[1]
+                self.original_cap = self.stream_cap
                 delay = 1
+                if(len(self.vision_modes) > 0):
+                    self.run_vision_modes()
                 while True:
-                    cv2.imshow("VIDEO VIEW", self.stream_type)
+                    cv2.imshow("VIDEO VIEW", self.original_cap)
                     # Quit if 'q' is presssed
-                    if cv2.waitKey(delay) & 0xFF ==ord('q'):
+                    if cv2.waitKey(delay) and keyboard.is_pressed("q"):
                         break
             except:
                     print("Error: Path Not Found")
 
-
-
+        
 
 
 
