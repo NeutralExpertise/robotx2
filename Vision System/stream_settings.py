@@ -2,6 +2,7 @@ import cv2
 from stream_types import Stream_Types
 import numpy as np
 from thresholds import Thresholds
+import time
 class Stream_Settings():
 
     def __init__(self):
@@ -76,7 +77,7 @@ class Stream_Settings():
             cv2.createTrackbar("VALUE MIN", "Parameters", Thresholds.VALUE_MIN,Thresholds.VALUE_MAX,self.on_value_change)
             cv2.createTrackbar("VALUE MAX", "Parameters", Thresholds.VALUE_MAX,Thresholds.VALUE_MAX,self.on_value_change)
 
-            # cv2.createTrackbar("AREA MIN", "Parameters", 0,20000, self.on_value_change) 
+            cv2.createTrackbar("AREA MIN", "Parameters", Thresholds.AREA_MIN,Thresholds.AREA_MAX, self.on_value_change) 
 
             cv2.createTrackbar("DILATION", "Parameters", Thresholds.DILATION, Thresholds.DILATION_MAX, self.on_value_change)
             cv2.createTrackbar("EROSION", "Parameters", Thresholds.EROSION, Thresholds.EROSION_MAX, self.on_value_change)
@@ -130,21 +131,62 @@ class Stream_Settings():
 
     
     def __colour_detector(self):
-        # imgHSV = cv2.cvtColor(self.stream_cap, cv2.COLOR_BGR2RGB)
-        Thresholds.HUE_MIN = cv2.getTrackbarPos("HUE MIN", "Parameters") 
+
+
+        self.stream_cap = cv2.cvtColor(self.stream_cap, cv2.COLOR_BGR2HSV)
+        height, width, _ = self.stream_cap.shape
+        cx = int(width/2)
+        cy = int(height/2)
+
+        pixel = self.stream_cap[cy, cx]
+        Thresholds.HUE_MIN = int(pixel[0])
+        Thresholds.SAT_MIN = int(pixel[1])
+        Thresholds.VALUE_MIN = int(pixel[2])
+        colour = "UNDEFINED"
+        if Thresholds.HUE_MIN >= 161 and Thresholds.VALUE_MIN < 255:
+            colour = "RED"
+        elif Thresholds.HUE_MIN < 22 and Thresholds.VALUE_MIN < 255:
+            colour = "ORANGE"
+        elif Thresholds.HUE_MIN < 33 and Thresholds.VALUE_MIN < 255:
+            colour = "YELLOW"
+        elif Thresholds.HUE_MIN < 78 and Thresholds.VALUE_MIN < 255:
+            colour = "GREEN"
+        elif Thresholds.HUE_MIN < 100 and Thresholds.VALUE_MIN < 100 and Thresholds.SAT_MIN < 100:
+            colour = "BLACK"
+        elif Thresholds.HUE_MIN <= 120 and Thresholds.SAT_MIN < 40: 
+            colour = "WHITE"
+        elif Thresholds.HUE_MIN < 120 and Thresholds.VALUE_MIN < 255: 
+            colour = "BLUE"
+        elif Thresholds.HUE_MIN < 170 and Thresholds.VALUE_MIN < 255:
+            colour = "PURPLE"
+
+        
+
+
+        b, g, r = int(pixel[0]), int(pixel[1]), int(pixel[2])
+
+        cv2.putText(self.stream_cap, colour, (10, 70), 0, 1.5, (b, g, r), 3)
+        cv2.putText(self.stream_cap, str(b) + " " + str(g) + " " + str(r), (20, 100), 0, 1, (b, g, r), 3)
+        cv2.circle(self.stream_cap, (cx, cy), 5, (255, 0, 0), 3)
+
+        
+
+        # Thresholds.HUE_MIN = cv2.getTrackbarPos("HUE MIN", "Parameters") 
         Thresholds.HUE_MAX = cv2.getTrackbarPos("HUE MAX", "Parameters") 
-        Thresholds.SAT_MIN = cv2.getTrackbarPos("SAT MIN", "Parameters") 
+        # Thresholds.SAT_MIN = cv2.getTrackbarPos("SAT MIN", "Parameters") 
         Thresholds.SAT_MAX = cv2.getTrackbarPos("SAT MAX", "Parameters") 
-        Thresholds.VALUE_MIN = cv2.getTrackbarPos("VALUE MIN", "Parameters") 
+        # Thresholds.VALUE_MIN = cv2.getTrackbarPos("VALUE MIN", "Parameters") 
         Thresholds.VALUE_MAX = cv2.getTrackbarPos("VALUE MAX", "Parameters")
         lower = np.array([Thresholds.HUE_MIN, Thresholds.SAT_MIN, Thresholds.VALUE_MIN])
         upper = np.array([Thresholds.HUE_MAX, Thresholds.SAT_MAX, Thresholds.VALUE_MAX])
         mask = cv2.inRange(self.stream_cap, lower, upper)
         cv2.imshow("MASK", mask)
         self.stream_cap = cv2.bitwise_and(self.stream_cap, self.stream_cap, mask = mask)
-        cv2.imshow("Edge Detector", self.stream_cap)
-        
+        self.stream_cap = cv2.cvtColor(self.stream_cap, cv2.COLOR_HSV2BGR)
+        cv2.imshow("Colour Detector", self.stream_cap)        
 
+        # RED 161, 0, 0
+        # RED, 180, 100, 100
     
     def blur(self, img):
         return cv2.GaussianBlur(img, (5,5), 1)
@@ -164,18 +206,22 @@ class Stream_Settings():
    
     def contour_detector(self, img, modified_img):
         contours, hierarchy = cv2.findContours(modified_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        Thresholds.AREA_MIN = cv2.getTrackbarPos("AREA MIN", "Parameters")
+        colour = (255, 0, 0)
         for contour in contours:
             area = cv2.contourArea(contour)
-            cv2.drawContours(img, contour, -1, (Thresholds.HUE_MIN, Thresholds.SAT_MIN, Thresholds.VALUE_MIN), 7)
-            perimeter = cv2.arcLength(contour,True)
-            approx = cv2.approxPolyDP(contour, 0.02*perimeter, True) # Corner points
-            x,y,w,h = cv2.boundingRect(approx)
-            # RGB VALUES
-            if(len(approx) == 6):
-                cv2.rectangle(img, (x, y), (x + w, y + h), (Thresholds.HUE_MIN, Thresholds.SAT_MIN, Thresholds.VALUE_MIN), 5)
-                cv2.putText(img, "Points: " + str(len(approx)), (x + w + 20, y + 20), cv2.FONT_HERSHEY_COMPLEX, 0.7, (Thresholds.HUE_MIN, Thresholds.SAT_MIN, Thresholds.VALUE_MIN), 2)
-                cv2.putText(img, "Height: " + str(int(h)), (x + w + 20, y + 45), cv2.FONT_HERSHEY_COMPLEX, 0.7, (Thresholds.HUE_MIN, Thresholds.SAT_MIN, Thresholds.VALUE_MIN), 2)
-                cv2.putText(img, "Width: " + str(int(w)), (x + w + 20, y + 70), cv2.FONT_HERSHEY_COMPLEX, 0.7, (Thresholds.HUE_MIN, Thresholds.SAT_MIN, Thresholds.VALUE_MIN), 2)
+            if(area > Thresholds.AREA_MIN):
+                # cv2.drawContours(img, contour, -1, colour, 7)
+                perimeter = cv2.arcLength(contour,True)
+                approx = cv2.approxPolyDP(contour, 0.02*perimeter, True) # Corner points
+                x,y,w,h = cv2.boundingRect(approx)
+                # RGB VALUES
+                # if(len(approx) == 6):
+                
+                cv2.rectangle(img, (x, y), (x + w, y + h), colour, 5)
+                cv2.putText(img, "Points: " + str(len(approx)), (x + w + 20, y + 20), cv2.FONT_HERSHEY_COMPLEX, 0.7, colour, 2)
+                cv2.putText(img, "Height: " + str(int(h)), (x + w + 20, y + 45), cv2.FONT_HERSHEY_COMPLEX, 0.7, colour, 2)
+                cv2.putText(img, "Width: " + str(int(w)), (x + w + 20, y + 70), cv2.FONT_HERSHEY_COMPLEX, 0.7, colour, 2)
         
 
     def run_vision_modes(self):

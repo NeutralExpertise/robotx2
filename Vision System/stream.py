@@ -37,7 +37,6 @@ class Stream(Stream_Settings):
                         self.run_vision_modes()
                     delay = 1
                     cv2.imshow("IMAGE VIEW", self.original_cap)
-                    # cv2.waitKey(0)
                     if cv2.waitKey(delay) and keyboard.is_pressed("q"):
                          break
                 except Exception as e:
