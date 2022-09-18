@@ -23,16 +23,9 @@ class Thresholds():
     DILATION = 1
     DILATION_MAX = 100
 
-    # RED
 
 
-    # INCHWORM = [84,79,65]
-    # LAWNGREEN = [90, 100, 49]
-    # BRIGHTGREEN = [96,100,50]
-    # CELADON = [123,47,78]
-    # PASTELGREEN = [120, 60, 67]
-    # PISTACHIO = [96, 42, 61]
-    # DOLLARBILL = [133,187,101]
+
 
 
     
