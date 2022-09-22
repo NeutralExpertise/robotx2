@@ -59,6 +59,7 @@ class Stream(Stream_Settings):
                         break
             except:
                     print("Error: Path Not Found")
+        self.stop_stream()
 
         
 
