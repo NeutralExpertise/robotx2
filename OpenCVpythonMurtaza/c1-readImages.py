@@ -4,7 +4,7 @@ import cv2
 img = cv2.imread("assets/lena.png", -1)
 # DISPLAY
 cv2.imshow("Lena Soderberg", img)
-cv2.waitKey(0)
+
 
 
 frameWidth = 640

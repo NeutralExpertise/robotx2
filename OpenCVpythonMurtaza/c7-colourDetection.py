@@ -36,7 +36,7 @@ def stackImages(scale,imgArray):
         ver = hor
     return ver
 
-path = 'assets/red-buoy.jpg'
+path = 'assets/red_buoy.jpg'
 cv2.namedWindow("TrackBars")
 cv2.resizeWindow("TrackBars", 640,240)
 cv2.createTrackbar("Hue Min", "TrackBars", 0, 179, empty)
@@ -67,7 +67,7 @@ while True:
     # cv2.imshow("Mask", mask)
     # cv2.imshow("Result", imgResult)
 
-    imgStack = stackImages(0.6, ([img,imgHSV], [mask,imgResult]))
+    imgStack = stackImages(0.3, ([img,imgHSV], [mask,imgResult]))
     cv2.imshow("Stacked Images", imgStack)
 
     cv2.waitKey(1)
