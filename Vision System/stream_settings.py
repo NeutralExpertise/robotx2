@@ -5,6 +5,7 @@ import numpy as np
 from thresholds import Thresholds
 import keyboard
 from screeninfo import get_monitors
+import imutils
 class Stream_Settings():
 
     def __init__(self):
@@ -152,61 +153,24 @@ class Stream_Settings():
 
     
     def __colour_detector(self):
-
-        self.stream_cap = cv2.cvtColor(self.stream_cap, cv2.COLOR_BGR2HSV)
-        # # Automatically Detect the colour
-        # if(self.use_trackbars == False):
-        height, width, _ = self.stream_cap.shape
-        cx = int(width/2)
-        cy = int(height/2)
-
-        pixel = self.stream_cap[cy, cx]
-        Thresholds.HUE_MIN = int(pixel[0])
-        Thresholds.SAT_MIN = int(pixel[1])
-        Thresholds.VALUE_MIN = int(pixel[2])
-        Thresholds.COLOUR = ""
-        if Thresholds.HUE_MIN >= Thresholds.RED_HUE and Thresholds.VALUE_MIN < Thresholds.RED_VAL:
-            Thresholds.COLOUR = "RED"         
-        elif Thresholds.HUE_MIN < Thresholds.ORANGE_HUE and Thresholds.VALUE_MIN < Thresholds.ORANGE_VAL:
-            Thresholds.COLOUR = "ORANGE"
-        elif Thresholds.HUE_MIN < Thresholds.YELLOW_HUE and Thresholds.VALUE_MIN < Thresholds.YELLOW_VAL:
-            Thresholds.COLOUR = "YELLOW"
-        elif Thresholds.HUE_MIN < Thresholds.GREEN_HUE and Thresholds.VALUE_MIN < Thresholds.GREEN_VAL:
-            Thresholds.COLOUR = "GREEN"
-        elif Thresholds.HUE_MIN < Thresholds.BLACK_HUE and Thresholds.VALUE_MIN < Thresholds.BLACK_SAT and Thresholds.SAT_MIN < Thresholds.BLACK_SAT:
-            Thresholds.COLOUR = "BLACK"
-        elif Thresholds.HUE_MIN <= Thresholds.WHITE_HUE and Thresholds.SAT_MIN < Thresholds.WHITE_SAT: 
-            Thresholds.COLOUR = "WHITE"
-        elif Thresholds.HUE_MIN < Thresholds.BLUE_HUE and Thresholds.VALUE_MIN < Thresholds.BLUE_VAL: 
-            Thresholds.COLOUR = "BLUE"
-        elif Thresholds.HUE_MIN < Thresholds.PURPLE_HUE and Thresholds.VALUE_MIN < Thresholds.PURPLE_VAL:
-            Thresholds.COLOUR = "PURPLE"
-
         
 
+            hsv = cv2.cvtColor(self.original_cap, cv2.COLOR_BGR2HSV)
+            
+            red_mask = cv2.inRange(hsv, Thresholds.RED_LOWER, Thresholds.RED_UPPER)
+            green_mask = cv2.inRange(hsv, Thresholds.GREEN_LOWER, Thresholds.GREEN_UPPER)
+            white_mask = cv2.inRange(hsv, Thresholds.WHITE_LOWER, Thresholds.WHITE_UPPER)
+            black_mask = cv2.inRange(hsv, Thresholds.BLACK_LOWER, Thresholds.BLACK_UPPER)
+            mask = red_mask + green_mask + white_mask + black_mask # WHITE MASK IS BROKEN
 
-        b, g, r = int(pixel[0]), int(pixel[1]), int(pixel[2])
+            cv2.imshow("MASK", mask)
+            self.stream_cap = cv2.bitwise_and(self.original_cap, self.original_cap, mask = mask) # Merge the original with the mask
 
-        cv2.putText(self.stream_cap, Thresholds.COLOUR, (10, 70), 0, 1.5, (b, g, r), 3)
-        cv2.putText(self.stream_cap, str(b) + " " + str(g) + " " + str(r), (20, 100), 0, 1, (b, g, r), 3)
-        cv2.circle(self.stream_cap, (cx, cy), 5, (255, 0, 0), 3) # Focus point
-        
-        if(self.use_trackbars):
-            Thresholds.HUE_MIN = cv2.getTrackbarPos("HUE MIN", "Parameters") 
-            Thresholds.HUE_MAX = cv2.getTrackbarPos("HUE MAX", "Parameters") 
-            Thresholds.SAT_MIN = cv2.getTrackbarPos("SAT MIN", "Parameters") 
-            Thresholds.SAT_MAX = cv2.getTrackbarPos("SAT MAX", "Parameters") 
-            Thresholds.VALUE_MIN = cv2.getTrackbarPos("VALUE MIN", "Parameters") 
-            Thresholds.VALUE_MAX = cv2.getTrackbarPos("VALUE MAX", "Parameters")
-        lower = np.array([Thresholds.HUE_MIN, Thresholds.SAT_MIN, Thresholds.VALUE_MIN])
-        upper = np.array([Thresholds.HUE_MAX, Thresholds.SAT_MAX, Thresholds.VALUE_MAX])
-        mask = cv2.inRange(self.stream_cap, lower, upper)
-        cv2.imshow("MASK", mask)
-        # self.stream_cap = cv2.bitwise_and(self.stream_cap, self.stream_cap, mask = mask)
-        # if(self.use_trackbars):
-        self.stream_cap = cv2.cvtColor(self.stream_cap, cv2.COLOR_HSV2BGR)
-        cv2.imshow("Colour Detector", self.stream_cap)        
-
+            cv2.imshow("Colour Detector", self.stream_cap)        
+            self.contour_detector(self.original_cap, Thresholds.RED_LOWER, red_mask)
+            self.contour_detector(self.original_cap, Thresholds.GREEN_LOWER, green_mask)
+            self.contour_detector(self.original_cap, Thresholds.WHITE_LOWER, white_mask)
+            self.contour_detector(self.original_cap, Thresholds.BLACK_LOWER, black_mask)
     
     def blur(self, img):
         return cv2.GaussianBlur(img, (Thresholds.BLUR_KERNEL,Thresholds.BLUR_KERNEL_MAX), 1)
@@ -226,28 +190,65 @@ class Stream_Settings():
         return cv2.dilate(img, kernel, iterations=Thresholds.EROSION)
 
        
-   # Would like to get the right COLOUR contours at some point
-    def contour_detector(self, img, modified_img):
-        contours, hierarchy = cv2.findContours(modified_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-        if(self.use_trackbars):
-            Thresholds.AREA_MIN = cv2.getTrackbarPos("AREA MIN", "Parameters")
-            Thresholds.AREA_MAX = cv2.getTrackbarPos("AREA MAX", "Parameters")
-            Thresholds.SHAPE_POINTS = cv2.getTrackbarPos("SHAPE POINTS", "Parameters")
-        colour = (Thresholds.HUE_MIN, Thresholds.SAT_MIN, Thresholds.VALUE_MIN)
-        for contour in contours:
-            area = cv2.contourArea(contour)
+   
+    def contour_detector(self, img, colour, modified_img):
+        contours = cv2.findContours(modified_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        contours = imutils.grab_contours(contours)
+        colour = (int(colour[2]), int(colour[1]), int(colour[0]))
+        colour_text = "UNDEFINED"
+        # NEEDS TO BE ADJUSTED - SOME WHITE OBJECTS ARE NOT BEING DETECTED
+        if(colour[0] >= Thresholds.RED_LOWER[2] 
+        and colour[1] >= Thresholds.RED_LOWER[1] 
+        and colour[2] >= Thresholds.RED_LOWER[0]
+        and colour[0] <= Thresholds.RED_UPPER[2]
+        and colour[1] <= Thresholds.RED_UPPER[1] 
+        and colour[2] <= Thresholds.RED_UPPER[0]):
+            colour_text = "RED"
+        elif(colour[0] >= Thresholds.GREEN_LOWER[2] 
+        and colour[1] >= Thresholds.GREEN_LOWER[1] 
+        and colour[2] >= Thresholds.GREEN_LOWER[0] 
+        and colour[0] <= Thresholds.GREEN_UPPER[2]
+        and colour[1] <= Thresholds.GREEN_UPPER[1] 
+        and colour[2] <= Thresholds.GREEN_UPPER[0]):
+            colour_text = "GREEN"
+        elif(colour[0] >= Thresholds.WHITE_LOWER[2] 
+        and colour[1] >= Thresholds.WHITE_LOWER[1] 
+        and colour[2] >= Thresholds.WHITE_LOWER[0] 
+        and colour[0] <= Thresholds.WHITE_UPPER[2]
+        and colour[1] <= Thresholds.WHITE_UPPER[1] 
+        and colour[2] <= Thresholds.WHITE_UPPER[0]):
+            colour_text = "WHITE"
+        elif(colour[0] >= Thresholds.BLACK_LOWER[2] 
+        and colour[1] >= Thresholds.BLACK_LOWER[1] 
+        and colour[2] >= Thresholds.BLACK_LOWER[0] 
+        and colour[0] <= Thresholds.BLACK_UPPER[2]
+        and colour[1] <= Thresholds.BLACK_UPPER[1] 
+        and colour[2] <= Thresholds.BLACK_UPPER[0]):
+            colour_text = "BLACK"
+
+        # colour = (255,255,0)
+        for c in contours:
+            area = cv2.contourArea(c)
+            if(self.use_trackbars):
+                Thresholds.AREA_MIN = cv2.getTrackbarPos("AREA MIN", "Parameters")
+                Thresholds.AREA_MAX = cv2.getTrackbarPos("AREA MAX", "Parameters")
+                Thresholds.SHAPE_POINTS = cv2.getTrackbarPos("SHAPE POINTS", "Parameters")
             if(area > Thresholds.AREA_MIN and area < Thresholds.AREA_MAX):
-                # cv2.drawContours(img, contour, -1, colour, 7)
-                perimeter = cv2.arcLength(contour,True)
-                approx = cv2.approxPolyDP(contour, 0.02*perimeter, True) # Corner points
+                perimeter = cv2.arcLength(c,True)
+                approx = cv2.approxPolyDP(c, 0.02*perimeter, True) # Corner points
                 bbox = cv2.boundingRect(approx)
                 x, y, w, h = int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3])
+                bbox_pts = np.float32([[x,y], [x+w, y+h], [x+w, y], [x, y+h]]) # TL = x,y, TR = x+w, y, BL = x,y+h, BR = x+w, y+h
 
-                
+                center = (int(x+w/2-20),int(y+h/2+5))
                 cv2.rectangle(img, (x,y), ((x+w), (y+h)), colour,3,1)               
                 cv2.putText(img, "Points: " + str(len(approx)), (x + w + 20, y + 20), cv2.FONT_HERSHEY_COMPLEX, 0.7, colour, 2)
                 cv2.putText(img, "Height: " + str(int(h)), (x + w + 20, y + 45), cv2.FONT_HERSHEY_COMPLEX, 0.7, colour, 2)
                 cv2.putText(img, "Width: " + str(int(w)), (x + w + 20, y + 70), cv2.FONT_HERSHEY_COMPLEX, 0.7, colour, 2)
+                cv2.putText(img, colour_text, center,  cv2.FONT_HERSHEY_COMPLEX, 0.5, (255,255,0), 2)
+        
+
+        
         
               
 
