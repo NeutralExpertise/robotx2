@@ -13,6 +13,9 @@ prev_state = 0
 DEBUG = True
 ENABLE_LOGGING = True
 
+DEBUG_LOC = "/home/jeremiahye/Desktop/GPS_Test/testData/debug.txt"
+GPSDATA_LOC = "/home/jeremiahye/Desktop/GPS_Test/testData/gpsdata"
+
 display = drivers.Lcd()
 
 # GPIO input setup
@@ -24,11 +27,21 @@ def main():
     global data_form
     global prev_state
     
+    
     while True:
         port="/dev/ttyAMA0"
         ser=serial.Serial(port, baudrate=9600, timeout=0.5)
         dataout = pynmea2.NMEAStreamReader()
-        newdata=ser.readline().decode('unicode_escape')
+        try:
+            newdata=ser.readline().decode('unicode_escape')
+        except:
+            print("Serial Exception")
+            
+        if DEBUG == True:
+            with open(DEBUG_LOC, "a") as file:
+                file.write("Raw: " +str(newdata))
+                file.close()
+                print("Raw: " +str(newdata))
         
         # Slide switch high
         if GPIO.input(slide_pin) == 1:
@@ -47,32 +60,40 @@ def main():
                         debug_log = "gpsdata" +str(data_form)+".csv  |  Lat=" +gps_lat+ " and Long=" +gps_lon+ \
                         "  |  " +str(newmsg)+ "  |  " +str(datetime.datetime.now())+ "\n"
                         print(debug_log)
-                        with open("testData/debug.txt", "a") as file:
+                        with open(DEBUG_LOC, "a") as file:
                             file.write(debug_log)
                             file.close()
                 
                     if ENABLE_LOGGING == True:
-                        with open("testData/gpsdata" + str(data_form) +".csv", "a") as file:
+                        with open(GPSDATA_LOC + str(data_form) +".csv", "a") as file:
                             file.write(str(gps_coord) + "\n")
                             file.close()
                 except (OSError, NameError) as err:
                     print(f"Unexpected {err=}, {type(err)=}")
                     display.lcd_display_string(f"{err=}",1)
-                except ChecksumError:
+                except pynmea2.ChecksumError:
                     print("Checksum Error")
-                    with open("testData/gpsdata" + str(data_form) +".csv", "a") as file:
+                    with open(GPSDATA_LOC + str(data_form) +".csv", "a") as file:
                             file.write("---------------Checksum Error!------------------\n")
-                            file.close()                
+                            file.close()
+                except (pynmea2.ParseError,pynmea2.SentenceTypeError) as err:
+                    print(f"Unexpected {err=}, {type(err)=}")
+                    with open(DEBUG_LOC, "a") as file:
+                            file.write(f"Unexpected {err=}, {type(err)=}")
+                            file.close()
                 
                 prev_state = 1
             
             elif newdata[0:6] == "$GPGSV":
                 print("GPGSV Data: " +str(newdata))
-                with open("testData/gpsdata" + str(data_form) +".csv", "a") as file:
+                with open(GPSDATA_LOC + str(data_form) +".csv", "a") as file:
                             file.write(str(newdata) + "\n")
                             file.close()
             else:
                 print("Something went wrong. Data:" +str(newdata))
+                with open(DEBUG_LOC, "a") as file:
+                    file.write("-----ERROR-----\n")
+                    file.close()
 
         #Slide switch low
         if GPIO.input(slide_pin) == 0:
