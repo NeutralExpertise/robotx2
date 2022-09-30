@@ -67,16 +67,6 @@ class Stream_Settings():
 
 
 
-            # cv2.createTrackbar("DILATION KERNEL", "Parameters", Thresholds.DILATION_KERNEL, Thresholds.DILATION_KERNEL_MAX, self.on_value_change)
-            # cv2.createTrackbar("DILATION KERNEL MAX", "Parameters", Thresholds.DILATION_KERNEL_MAX, Thresholds.DILATION_KERNEL_MAX, self.on_value_change)
-            # cv2.createTrackbar("EROSION KERNEL", "Parameters", Thresholds.EROSION_KERNEL, Thresholds.EROSION_KERNEL_MAX, self.on_value_change)
-            # cv2.createTrackbar("EROSION KERNEL MAX", "Parameters", Thresholds.EROSION_KERNEL_MAX, Thresholds.EROSION_KERNEL_MAX, self.on_value_change)
-
-            # cv2.createTrackbar("BLUR KERNEL", "Parameters", Thresholds.BLUR_KERNEL, Thresholds.BLUR_KERNEL_MAX, self.on_value_change)
-            # cv2.createTrackbar("BLUR KERNEL MAX", "Parameters", Thresholds.BLUR_KERNEL_MAX, Thresholds.BLUR_KERNEL_MAX, self.on_value_change)
-
-
-
 
 
     def add_type(self, new_type):
@@ -157,19 +147,11 @@ class Stream_Settings():
 
             
             hsv = cv2.cvtColor(self.original_cap, cv2.COLOR_BGR2HSV)
-            
-            # if(self.is_active):
-            #     Thresholds.RED_LOWER[0] = Thresholds.HUE_MIN = cv2.getTrackbarPos("HUE MIN", "Parameters")
-            #     Thresholds.RED_UPPER[0] = Thresholds.HUE_MAX = cv2.getTrackbarPos("HUE MAX", "Parameters")
-            #     Thresholds.RED_LOWER[1] = Thresholds.SAT_MIN = cv2.getTrackbarPos("SAT MIN", "Parameters")
-            #     Thresholds.RED_UPPER[1] = Thresholds.SAT_MAX = cv2.getTrackbarPos("SAT MAX", "Parameters")
-            #     Thresholds.RED_LOWER[2] = Thresholds.VALUE_MIN = cv2.getTrackbarPos("VALUE MIN", "Parameters")
-            #     Thresholds.RED_UPPER[2] = Thresholds.VALUE_MAX = cv2.getTrackbarPos("VALUE MAX", "Parameters")
+
             red_mask = cv2.inRange(hsv, Thresholds.RED_LOWER, Thresholds.RED_UPPER)
             green_mask = cv2.inRange(hsv, Thresholds.GREEN_LOWER, Thresholds.GREEN_UPPER)
             white_mask = cv2.inRange(hsv, Thresholds.WHITE_LOWER, Thresholds.WHITE_UPPER)
             black_mask = cv2.inRange(hsv, Thresholds.BLACK_LOWER, Thresholds.BLACK_UPPER)
-
 
             mask = red_mask + green_mask + white_mask + black_mask
 

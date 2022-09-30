@@ -16,7 +16,7 @@ class Thresholds():
     VALUE_MAX = 255
 
     AREA_MIN = 0
-    AREA_MAX = 100000
+    AREA_MAX = 1000000
 
     EROSION = 1
     EROSION_MAX = 100
@@ -34,11 +34,13 @@ class Thresholds():
 
     RED_LOWER = np.array([161,20, 60])
     RED_UPPER = np.array([179,255, 255])
-    '''RED BUOY IS BETTER IDENTIFIED WITH THESE THRESHOLDS'''
+    '''BUOY IS BETTER IDENTIFIED WITH THESE THRESHOLDS'''
     # RED_LOWER = np.array([0,148, 0])
     # RED_UPPER = np.array([179,255, 255])
     ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-    GREEN_LOWER = np.array([45, 20, 60])
+    # GREEN_LOWER = np.array([45, 20, 60])
+    # GREEN_UPPER = np.array([90, 255, 255])
+    GREEN_LOWER = np.array([45, 0, 0])
     GREEN_UPPER = np.array([90, 255, 255])
     WHITE_LOWER = np.array([0, 0, 88])
     WHITE_UPPER = np.array([179, 76, 255])

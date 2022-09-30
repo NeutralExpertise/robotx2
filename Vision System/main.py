@@ -5,9 +5,9 @@ import colour_picker as cp
 def main():
     stream = Stream()
     stream.add_type(Stream_Types.IMAGE)
-    stream.add_image_path("Resources/green-buoy.jpg")
+    stream.add_image_path("Resources/red-buoy.jpg")
     stream.add_camera(0)
-    # stream.resize()q
+    # stream.resize()
     stream.colour_detection()
     # stream.edge_detection()
     # # stream.object_tracking()
