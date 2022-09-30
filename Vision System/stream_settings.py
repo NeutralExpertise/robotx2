@@ -153,15 +153,25 @@ class Stream_Settings():
 
     
     def __colour_detector(self):
-        
 
+
+            
             hsv = cv2.cvtColor(self.original_cap, cv2.COLOR_BGR2HSV)
             
+            # if(self.is_active):
+            #     Thresholds.RED_LOWER[0] = Thresholds.HUE_MIN = cv2.getTrackbarPos("HUE MIN", "Parameters")
+            #     Thresholds.RED_UPPER[0] = Thresholds.HUE_MAX = cv2.getTrackbarPos("HUE MAX", "Parameters")
+            #     Thresholds.RED_LOWER[1] = Thresholds.SAT_MIN = cv2.getTrackbarPos("SAT MIN", "Parameters")
+            #     Thresholds.RED_UPPER[1] = Thresholds.SAT_MAX = cv2.getTrackbarPos("SAT MAX", "Parameters")
+            #     Thresholds.RED_LOWER[2] = Thresholds.VALUE_MIN = cv2.getTrackbarPos("VALUE MIN", "Parameters")
+            #     Thresholds.RED_UPPER[2] = Thresholds.VALUE_MAX = cv2.getTrackbarPos("VALUE MAX", "Parameters")
             red_mask = cv2.inRange(hsv, Thresholds.RED_LOWER, Thresholds.RED_UPPER)
             green_mask = cv2.inRange(hsv, Thresholds.GREEN_LOWER, Thresholds.GREEN_UPPER)
             white_mask = cv2.inRange(hsv, Thresholds.WHITE_LOWER, Thresholds.WHITE_UPPER)
             black_mask = cv2.inRange(hsv, Thresholds.BLACK_LOWER, Thresholds.BLACK_UPPER)
-            mask = red_mask + green_mask + white_mask + black_mask # WHITE MASK IS BROKEN
+
+
+            mask = red_mask + green_mask + white_mask + black_mask
 
             cv2.imshow("MASK", mask)
             self.stream_cap = cv2.bitwise_and(self.original_cap, self.original_cap, mask = mask) # Merge the original with the mask
@@ -196,7 +206,7 @@ class Stream_Settings():
         contours = imutils.grab_contours(contours)
         colour = (int(colour[2]), int(colour[1]), int(colour[0]))
         colour_text = "UNDEFINED"
-        # NEEDS TO BE ADJUSTED - SOME WHITE OBJECTS ARE NOT BEING DETECTED
+        
         if(colour[0] >= Thresholds.RED_LOWER[2] 
         and colour[1] >= Thresholds.RED_LOWER[1] 
         and colour[2] >= Thresholds.RED_LOWER[0]
@@ -226,6 +236,7 @@ class Stream_Settings():
         and colour[2] <= Thresholds.BLACK_UPPER[0]):
             colour_text = "BLACK"
 
+
         # colour = (255,255,0)
         for c in contours:
             area = cv2.contourArea(c)
@@ -242,9 +253,9 @@ class Stream_Settings():
 
                 center = (int(x+w/2-20),int(y+h/2+5))
                 cv2.rectangle(img, (x,y), ((x+w), (y+h)), colour,3,1)               
-                cv2.putText(img, "Points: " + str(len(approx)), (x + w + 20, y + 20), cv2.FONT_HERSHEY_COMPLEX, 0.7, colour, 2)
-                cv2.putText(img, "Height: " + str(int(h)), (x + w + 20, y + 45), cv2.FONT_HERSHEY_COMPLEX, 0.7, colour, 2)
-                cv2.putText(img, "Width: " + str(int(w)), (x + w + 20, y + 70), cv2.FONT_HERSHEY_COMPLEX, 0.7, colour, 2)
+                # cv2.putText(img, "Points: " + str(len(approx)), (x + w + 20, y + 20), cv2.FONT_HERSHEY_COMPLEX, 0.7, colour, 2)
+                # cv2.putText(img, "Height: " + str(int(h)), (x + w + 20, y + 45), cv2.FONT_HERSHEY_COMPLEX, 0.7, colour, 2)
+                # cv2.putText(img, "Width: " + str(int(w)), (x + w + 20, y + 70), cv2.FONT_HERSHEY_COMPLEX, 0.7, colour, 2)
                 cv2.putText(img, colour_text, center,  cv2.FONT_HERSHEY_COMPLEX, 0.5, (255,255,0), 2)
         
 

@@ -16,7 +16,7 @@ class Thresholds():
     VALUE_MAX = 255
 
     AREA_MIN = 0
-    AREA_MAX = 20000
+    AREA_MAX = 100000
 
     EROSION = 1
     EROSION_MAX = 100
@@ -40,10 +40,10 @@ class Thresholds():
     ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
     GREEN_LOWER = np.array([45, 20, 60])
     GREEN_UPPER = np.array([90, 255, 255])
-    WHITE_LOWER = np.array([0, 0, 135])
-    WHITE_UPPER = np.array([179, 18, 255])
+    WHITE_LOWER = np.array([0, 0, 88])
+    WHITE_UPPER = np.array([179, 76, 255])
     BLACK_LOWER = np.array([0, 0 ,0])
-    BLACK_UPPER = np.array([179, 45, 85])
+    BLACK_UPPER = np.array([0, 0, 77])
 
     SHAPE_POINTS = 0
     SHAPE_POINTS_MAX = 9
