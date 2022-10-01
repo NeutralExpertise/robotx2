@@ -9,7 +9,7 @@ class Thresholds():
     EDGE_THRESHOLD2 = 255
 
     HUE_MIN = 0
-    HUE_MAX = 179
+    HUE_MAX = 255
     SAT_MIN = 0
     SAT_MAX = 255
     VALUE_MIN = 0
@@ -33,17 +33,15 @@ class Thresholds():
 
 
     RED_LOWER = np.array([161,20, 60])
-    RED_UPPER = np.array([179,255, 255])
+    RED_UPPER = np.array([255,255, 255])
     '''BUOY IS BETTER IDENTIFIED WITH THESE THRESHOLDS'''
-    # RED_LOWER = np.array([0,148, 0])
-    # RED_UPPER = np.array([179,255, 255])
+    RED_LOWER = np.array([1, 0, 0])
+    RED_UPPER = np.array([255,255, 255])
     ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-    # GREEN_LOWER = np.array([45, 20, 60])
-    # GREEN_UPPER = np.array([90, 255, 255])
-    GREEN_LOWER = np.array([45, 0, 0])
-    GREEN_UPPER = np.array([90, 255, 255])
+    GREEN_LOWER = np.array([9, 96, 0])
+    GREEN_UPPER = np.array([88, 255, 247])
     WHITE_LOWER = np.array([0, 0, 88])
-    WHITE_UPPER = np.array([179, 76, 255])
+    WHITE_UPPER = np.array([255, 76, 255])  
     BLACK_LOWER = np.array([0, 0 ,0])
     BLACK_UPPER = np.array([0, 0, 77])
 
