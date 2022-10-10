@@ -64,6 +64,8 @@ Notes: Extremely significant drift (50m) observed in the first 10 minutes. Drift
 
 Despite extensive troubleshooting, the margin of error seemed to be far too significant to be normal. A second location was selected at a beach far away from possible interference.
 
+<img src="img/beach.png">
+
 Test 4
 
 Conditions: Clear Sky, 10am. Recorded for 30 minutes.
