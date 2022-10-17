@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
+from screeninfo import get_monitors
 class Thresholds():
-
+    resolution = {"top": get_monitors()[0].y, "left":get_monitors()[0].x, "height": get_monitors()[0].height, "width":get_monitors()[0].width}
 
     EDGE_THRESHOLD1 = 0
     EDGE_THRESHOLD2 = 234
@@ -28,6 +29,11 @@ class Thresholds():
 
     BLUR_KERNEL = 5
     BLUR_KERNEL_MAX = 5
+
+    CORNER_POINTS = 8
+
+    RESOLUTION_HEIGHT = resolution["height"]
+    RESOLUTION_WIDTH = resolution["width"]
 
 
     # RED_LOWER = np.array([161,20, 60])
