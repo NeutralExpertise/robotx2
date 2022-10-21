@@ -1,3 +1,5 @@
+import sys
+sys.path.append(r'/home/jeremiahye/.local/lib/python3.9/site-packages')
 import time
 import board
 import busio
@@ -19,7 +21,9 @@ def setup():
     global draw
     global image
     
-    global ser
+    global ser_1
+    global ser_2
+    global ser_3
     global data_form
     global toggle_gps
     global prev_state
@@ -27,7 +31,6 @@ def setup():
     
     global WIDTH
     global HEIGHT
-    global LOOPTIME
     global current_time
     
     global DEBUG
@@ -35,23 +38,27 @@ def setup():
     global ENABLE_LOGGING
     global DEBUG_LOC
     global GPSDATA_LOC
+    global NMEA_TYPES
     
-    data_form = 1
+    data_form = 0
     toggle_gps = 17
     prev_state = 0
     loading_bar = deque(maxlen=20)
 
     WIDTH = 128
     HEIGHT = 64
-    LOOPTIME = 0.2
     
     DEBUG = True
     DEBUG_LOGGING = True
     ENABLE_LOGGING = False 
     
-    ser=serial.Serial("/dev/ttyAMA0")
-    DEBUG_LOC = "/home/jeremiahye/Desktop/GPS_Test/testData/debug.txt"
+    ser_1 = serial.Serial("/dev/ttyAMA0")
+    ser_3 = serial.Serial("/dev/ttyACM0")
+    
+    DEBUG_LOC = "/home/jeremiahye/Desktop/GPS_Test/testData/debug"
     GPSDATA_LOC = "/home/jeremiahye/Desktop/GPS_Test/testData/gpsdata"
+    
+    NMEA_TYPES = ["$GPGGA","$GNGGA","$GPGSA","$GNGSA","$GPGSV"]
 
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(toggle_gps, GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
@@ -63,7 +70,7 @@ def setup():
     draw = ImageDraw.Draw(image)
     # Draw a white background
     draw.rectangle((0, 0, oled.width, oled.height), outline=255, fill=255)
-    font = ImageFont.truetype('PixelOperator.ttf', 16)
+    font = ImageFont.truetype('/home/jeremiahye/Desktop/GPS_Test/PixelOperator.ttf', 16)
 
 def oled_display(line_1='default line 1', line_2='default line 2', line_3='default line 3',line_4='default line 4'):
     draw.rectangle((0, 0, oled.width, oled.height), outline=0, fill=0)
@@ -76,38 +83,63 @@ def oled_display(line_1='default line 1', line_2='default line 2', line_3='defau
     oled.image(image)
     oled.show()
     
+    
+def parse_nmea(log_data):
+    
+    newmsg=pynmea2.parse(log_data)
+    if not str(newmsg.lat):
+        gps_lat = str(newmsg.latitude)
+        gps_lon = str(newmsg.longitude)
+        gps_coord = gps_lat+ "," +gps_lon
+        print(gps_coord)    
+    
+def log_file(nmea_sentence,source_num):
+    if nmea_sentence[0:6] in NMEA_TYPES:
+        with open(DEBUG_LOC+ "_" +str(source_num)+ ".csv", "a") as file:
+            file.write(nmea_sentence)
+            file.close()
+
+        with open(GPSDATA_LOC+str(data_form)+"_"+str(source_num)+".csv", "a") as file:
+            file.write(nmea_sentence)
+            file.close()
+            
+        if nmea_sentence[0:6] == "$GNGGA" and source_num == 1:
+            print(nmea_sentence)
+
 def main():
     global ENABLE_LOGGING
-    while True:     
-        dataout = pynmea2.NMEAStreamReader()
+    global data_form
+    global prev_state 
+    while True:
+        #dataout = pynmea2.NMEAStreamReader()
         try:
-            newdata=ser.readline().decode('unicode_escape')
+            newdata_1=ser_1.readline().decode('unicode_escape')
+            newdata_3=ser_3.readline().decode('unicode_escape')
         except:
-            print("Serial Exception")    
+            print("Serial Exception")
+            print(newdata_1)
         
         if GPIO.input(toggle_gps) == 1:
             GPIO.wait_for_edge(toggle_gps, GPIO.FALLING)
             ENABLE_LOGGING = not ENABLE_LOGGING
         
-        if ENABLE_LOGGING == True:                          
-            if newdata[0:6] == "$GPGGA" or newdata[0:6] == "$GPGSA" or newdata[0:6] == "$GPGSV":
-                with open("testData/trifecta.csv", "a") as file:
-                    file.write(newdata)
-                    file.close()
-                
-                if loading_bar.count('|') < 20:
-                    loading_bar.append('|')
-                else:
-                    loading_bar.clear()
-                now = datetime.now()
-                current_time = now.strftime("%H:%M:%S")
-                oled_display("Writing to CSV",'['+''.join(loading_bar)+']',"",current_time)
+        if ENABLE_LOGGING == True:
+            log_file(newdata_1,1)
+            log_file(newdata_3,3)
+
+            now = datetime.now()
+            current_time = now.strftime("%H:%M:%S")
+            oled_display("Writing to:","gpsdata"+str(data_form)+".csv",'['+''.join(loading_bar)+']',current_time)
             
+            prev_state = 1
             
         else:
+            if prev_state == 1:
+                data_form += 1
             now = datetime.now()
             current_time = now.strftime("%H:%M:%S")
             oled_display('GPS Inactive','','',current_time)
+            prev_state = 0
             
 def destroy():
     # Release resource
@@ -125,19 +157,4 @@ if __name__ == '__main__':
         destroy()
         
 #def discard_anom():
-#0.00008993 = 10m
-    
-def save_log(log_data,log_location,log_type):
-    if log_type == "DEBUG":
-        with open(DEBUG_LOC, "a") as file:
-            file.write(debug_log)
-            file.close()
-    elif log_type == "RECORD":
-        pass
-    elif log_type == "ERROR":
-        pass
-    
-    with open(GPSDATA_LOC + str(data_form) +".csv", "a") as file:
-        file.write(str(newdata) + "\n")
-        file.close()
-    
+#0.00008993 = 10m    
