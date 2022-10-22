@@ -10,7 +10,6 @@ class Stream_Settings():
         self.stream_type = Stream_Types.CAMERA
         self.cameraID = 0
         self.is_active = False
-        self.object_detection_settings = []
         
          
     def display_focal_point(self):
@@ -43,31 +42,8 @@ class Stream_Settings():
     def set_camera(self, cameraID):
         self.cameraID = cameraID
 
+
     
-
-    # Detection Strategies
-
-    def add_colour_detection(self):
-        self.object_detection_settings.append(self.object_detector.add_colour_detection)
-
-    def add_edge_detection(self):
-        self.object_detection_settings.append(self.object_detector.add_edge_detection)
-
-    def add_object_tracking(self):
-        self.object_detection_settings.append(self.object_detector.add_object_tracking)
-
-    # def resize(self):
-    #     if(self.is_active == False):
-    #         self.object_detection_settings.append(self.resize)
-    #     else:
-    #         if(self.use_trackbars):
-    #             Thresholds.RESOLUTION_WIDTH, Thresholds.RESOLUTION_HEIGHT = cv2.getTrackbarPos("SIZE WIDTH", "Parameters"), cv2.getTrackbarPos("SIZE HEIGHT", "Parameters")
-    #         # WIDTH, HEIGHT CANNOT BE 0 - IMPOSSIBLE
-    #         if(Thresholds.RESOLUTION_WIDTH == 0):
-    #             Thresholds.RESOLUTION_WIDTH = 1
-    #         if(Thresholds.RESOLUTION_HEIGHT == 0):
-    #             Thresholds.RESOLUTION_HEIGHT = 1    
-    #         self.capture = cv2.resize(self.capture, (Thresholds.RESOLUTION_WIDTH, Thresholds.RESOLUTION_HEIGHT))
 
 
 

@@ -1,10 +1,15 @@
 import cv2
+'''Object Class
+# Gets updated as each detector returns their related information, for example colour detector will update the object's colour
+
+'''
 class Object():
-    coordinates = ()
-    boundaries = (())
-    distance = 0
-    colour = []
-    corners = 0
+    def __init__(self):
+        self.coordinates = ()
+        self.boundaries = (())
+        self.distance = 0
+        self.colour = []
+        self.corners = 0
 
     def set_num_corners(self, corners):
         self.corners = corners
@@ -12,6 +17,13 @@ class Object():
 
     def get_num_corners(self):
         return self.corners
+
+
+    def get_colour(self):
+        return self.colour
+
+    def set_colour(self, colour):
+        self.colour = colour
 
 
     def set_coordinates(self, coordinates):
@@ -22,7 +34,7 @@ class Object():
 
     def set_boundaries(self, pt1, pt2):
         
-        #     # Object Avoidance Boundaries
+            # Object Avoidance Boundaries
             pt1 = (int(self.coordinates[0]-100), int(self.coordinates[1]-100)) # x,y
             pt2 = (int(self.coordinates[0] + self.coordinates[2])+100, int(self.coordinates[1] + self.coordinates[3])+100) # w,h
             self.boundaries.add((pt1, pt2))
@@ -39,48 +51,3 @@ class Object():
     def get_distance(self):
         return self.distance
 
-
-    def plot_focal_point_link(self, stream, focal_point):
-        x = self.coordinates[0][0]
-        y = self.coordinates[0][1]
-        w = self.coordinates[1][0]
-        h = self.coordinates[1][1]
-        center = (int(x+w/2),int(y+h/2))
-        cv2.line(stream, (center), (focal_point), (255,0,255), 2)
-
-
-    def plot_coordinates(self, stream):
-        x = self.coordinates[0][0]
-        y = self.coordinates[0][1]
-        w = self.coordinates[1][0]
-        h = self.coordinates[1][1]
-        cv2.putText(stream, "x: " + str(x), (x + w + 20, y + 100), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,255), 2)
-        cv2.putText(stream, "y: " + str(y), (x + w + 20, y + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,255), 2)
-
-    def plot_size(self, stream):
-        x = self.coordinates[0][0]
-        y = self.coordinates[0][1]
-        w = self.coordinates[1][0]
-        h = self.coordinates[1][1]
-        cv2.putText(stream, "Height: " + str(int(h)), (x + w + 20, y + 45), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,255), 2)
-        cv2.putText(stream, "Width: " + str(int(w)), (x + w + 20, y + 70), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,255), 2)
-
-
-    def plot_num_corners(self, stream):
-        x = self.coordinates[0][0]
-        y = self.coordinates[0][1]
-        w = self.coordinates[1][0]
-        h = self.coordinates[1][1]
-        center = (int(x+w/2),int(y+h/2))
-        cv2.putText(stream, str(self.distance), (center), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,0), 2)
-        cv2.putText(stream, "Points: " + str(self.corners), (x + w + 20, y + 20), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,255), 2)
-
-    def plot_boundaries(self, stream):
-        cv2.rectangle(stream, self.boundaries[0], self.boundaries[1], (85,51,255),10,1) 
-
-    def plot_data(self):
-        self.plot_boundaries()
-        self.plot_coordinates()
-        self.plot_focal_point_link()
-        self.plot_num_corners()
-        self.plot_size()
