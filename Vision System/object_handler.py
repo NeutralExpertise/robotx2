@@ -1,10 +1,10 @@
 from object import Object
 
-'''Object Handler that "handles" a single object'''
+'''Object Handler that "handles" captured objects'''
 class Object_Handler:
 
     def __init__(self):
-        self.objects = set([])
+        self.objects = []
         self.object = Object()
 
     def add_colour_data(self, colour_data):
@@ -26,10 +26,9 @@ class Object_Handler:
         return self.object.get_coordinates()
 
     def add_object_to_list(self):
-        for object in self.objects:
-            if(object.get_coordinates() == self.object.get_coordinates()):
-                return
-        self.objects.add(self.object)
+        self.objects.append(self.object)
+        self.object = Object()
+
 
     def clear_object_list(self):
         self.objects.clear()
@@ -42,6 +41,17 @@ class Object_Handler:
 
     def get_distance(self):
         return self.object.get_distance()
+
+    def calculate_distance(self, start, end):
+        self.object.calculate_distance(start, end)
+
+    def add_boundaries(self):
+        self.object.set_boundaries()
+
+    def get_boundaries(self):
+        return self.object.get_boundaries()
+
+
 
     
 

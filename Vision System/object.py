@@ -6,7 +6,7 @@ import cv2
 class Object():
     def __init__(self):
         self.coordinates = ()
-        self.boundaries = (())
+        self.boundaries = ()
         self.distance = 0
         self.colour = []
         self.corners = 0
@@ -32,12 +32,12 @@ class Object():
     def get_coordinates(self):
         return self.coordinates
 
-    def set_boundaries(self, pt1, pt2):
+    def set_boundaries(self):
         
             # Object Avoidance Boundaries
             pt1 = (int(self.coordinates[0]-100), int(self.coordinates[1]-100)) # x,y
             pt2 = (int(self.coordinates[0] + self.coordinates[2])+100, int(self.coordinates[1] + self.coordinates[3])+100) # w,h
-            self.boundaries.add((pt1, pt2))
+            self.boundaries = (pt1,pt2)
 
 
     def get_boundaries(self):
@@ -45,7 +45,7 @@ class Object():
 
 
     def calculate_distance(self, p1,p2):
-        distance = int(((p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2) ** 0.5)
+        self.distance = int(((p2 - p1) ** 2 + (p2 - p1) ** 2) ** 0.5)
 
 
     def get_distance(self):

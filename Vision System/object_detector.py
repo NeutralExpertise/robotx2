@@ -1,5 +1,5 @@
-'''Object Detector runs different detection modes (as a composite class)'''
-class Object_Detector():
+from stream import Stream_Settings
+class Object_Detector(Stream_Settings):
 
     def __init__(self, object_handler):
         self.detection_modes = []

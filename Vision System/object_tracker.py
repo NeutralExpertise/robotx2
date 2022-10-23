@@ -1,32 +1,59 @@
 import cv2
 
 from stream_settings import Stream_Settings
+import numpy as np
 class Object_Tracker(Stream_Settings):
 
     def __init__(self, object_handler):
         self.tracker = cv2.legacy.MultiTracker.create()
+        
         self.active_tracker = self.create_tracker()
         self.object_handler = object_handler
         self.num_objects_tracking = 0
 
+    # Problem: How do we check if an object has gone off screen?
+    # Solution: Iterate through the bboxes 
+
+    def check_tracked_objects(self, capture):
+         # Ensure that we don't add another tracker to an already tracked object
+        for object in self.object_handler.get_objects():
+            if(object.get_coordinates() not in self.tracker.getObjects()):
+                self.tracker.add(self.create_tracker(), capture, object.get_coordinates())
+                # print(f"New Object Found: {object.get_coordinates()}")
+                   
+        
 
     def track(self, capture):
-        if(self.num_objects_tracking < len(self.object_handler.get_objects())):
-            # THIS CODE CAUSES THE TRACKER TO BE TOO SLOW - WE NEED TO ONLY USE IT ON NEW OBJECTS
-            for object in self.object_handler.get_objects():
-                self.tracker.add(self.active_tracker, capture, object.get_coordinates())
-                self.num_objects_tracking += 1
-        if(len(self.object_handler.get_objects()) > 0):
-            success, bboxes = self.tracker.update(capture)
-            if(success):
-                cv2.putText(capture, "TRACKING ", (400, 75), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,255,0), 2)
-                for object in bboxes:
-                    pt1 = (int(object[0]), int(object[1]))
-                    pt2 = (int(object[0] + object[2]), int(object[1] + object[3]))
-                    cv2.rectangle(capture, pt1, pt2, (255,0,255),3,1)            
 
-            else:
-                cv2.putText(capture, "TRACKING LOST", (400, 75), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)
+        
+        # Add duplication checking code here
+        
+        # Update the tracker to track the new location of the object
+        success, bboxes = self.tracker.update(capture)
+        if(success):
+            # cv2.putText(capture, "TRACKING ", (100, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,255,0), 2)
+            for object in bboxes:
+                pt1 = (int(object[0]), int(object[1]))
+                pt2 = (int(object[0] + object[2]), int(object[1] + object[3]))
+                cv2.rectangle(capture, pt1, pt2, (255,0,255),3,1)            
+
+        else:
+            # cv2.putText(capture, "TRACKING LOST", (100, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)
+            self.tracker = cv2.legacy.MultiTracker.create()
+            
+            
+
+        num_tracked_objects = len(self.tracker.getObjects())
+
+        self.check_tracked_objects(capture)
+        
+       
+        
+
+
+
+        
+
 
 
     def set_tracker(self, tracker):

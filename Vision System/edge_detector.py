@@ -1,4 +1,5 @@
 import cv2
+from stream_settings import Stream_Settings
 from thresholds import Thresholds
 import imutils
 import numpy as np
@@ -7,6 +8,7 @@ class Edge_Detector():
     def __init__(self, object_handler, use_trackbars):
         self.use_trackbars = use_trackbars
         self.object_handler = object_handler
+        
 
     def detect(self, capture):
         grey_scale = cv2.cvtColor(capture, cv2.COLOR_BGR2GRAY)
@@ -21,16 +23,15 @@ class Edge_Detector():
         dilate = cv2.dilate(edge_detector, kernel, iterations=Thresholds.DILATION)
         erode = cv2.erode(dilate, kernel, iterations=Thresholds.EROSION)
         edge_detected_capture = erode
-        self.__contour_detection(edge_detected_capture)
         if(self.use_trackbars):
             cv2.imshow("Edge Detector", edge_detected_capture)
+        self.__contour_detection(edge_detected_capture)
+        
 
 
     def __contour_detection(self, capture):
         conts = cv2.findContours(capture, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         conts = imutils.grab_contours(conts)
-        # conts_img = np.zeros(self.capture.shape)
-        # conts_img = cv2.drawContours(conts_img, conts, -1, (0,255,0), 2)
         if(self.use_trackbars):
             Thresholds.AREA_MIN = cv2.getTrackbarPos("AREA MIN", "Parameters")
             Thresholds.AREA_MAX = cv2.getTrackbarPos("AREA MAX", "Parameters")
@@ -50,19 +51,14 @@ class Edge_Detector():
             if(cv2.contourArea(c) > Thresholds.AREA_MIN and cv2.contourArea(c) < Thresholds.AREA_MAX):
                 # The buoys usually have 8 corner points
                 if(len(approx) == Thresholds.CORNER_POINTS):
-                    # cv2.drawContours(conts_img, [c], -1, (0,255,0), 2)
                     # Only display a box over the object itself and ignore all the shapes detected INSIDE the object itself
                     if(h > max_bbox):
                         bbox_coords = ((x,y), ((x+w), (y+h)))
                         self.object_handler.add_corner_data(len(approx))
                         self.object_handler.add_coordinates_data(bbox)
-                                             
-            
+                        self.object_handler.add_boundaries()
+                        self.object_handler.add_object_to_list()
                         max_bbox = h
-                        
-
-            # if(self.use_trackbars):
-            #     cv2.imshow("CONTOURS", conts_img)
 
     def blur(self, capture):
         return cv2.GaussianBlur(capture, (Thresholds.BLUR_KERNEL, Thresholds.BLUR_KERNEL_MAX), 1)

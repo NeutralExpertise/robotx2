@@ -1,47 +1,31 @@
 import cv2
-class Position_Handler:
-
-    def __init__(self, object_handler):
-        self.object_handler = object_handler
+from stream_settings import Stream_Settings
+class Position_Handler(Stream_Settings):
 
 
-    def check_distance_violation(self, stream):
-        if(len(self.object_handler.get_objects()) == 2):
-            objects = list(self.object_handler.get_objects())
-            if(objects[0].get_distance() != objects[1].get_distance()):
-                cv2.putText(stream, "BOUNDARY VIOLATION ", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,0), 10)
-                cv2.putText(stream, "BOUNDARY VIOLATION ", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)
-                return True
+    def check_distance_violation(self, stream, obj_1, obj_2):
+        if(obj_1.get_distance() != obj_2.get_distance()):
+            return True
+            
         return False
+
             
 
-
-    # Check if focal point enter's an object's boundary zone (Means boat is not centered)
-    def check_boundary_violation(self, stream):
-        focal_point = self.get_focal_point_coords()
-        for object in self.objects:
-            x = object.get_coordinates()[0][0]
-            y = object.get_coordinates()[0][1]
-            w = object.get_coordinates()[1][0]
-            h = object.get_coordinates()[1][1]
-            if(self.get_focal_point_coords()[0] >= x and 
-            self.get_focal_point_coords()[0] <= w and 
-            self.get_focal_point_coords()[1] > y and 
-            self.get_focal_point_coords()[1] < h):
-                cv2.putText(stream, "BOUNDARY VIOLATION ", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,0), 10)
-                cv2.putText(stream, "BOUNDARY VIOLATION ", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)
-                return True
-        else:
-            cv2.putText(stream, "", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 10)
-            cv2.putText(stream, "", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,255,0), 2)
+    # Check if focal point enter's an object's boundary zone
+    def check_boundary_violation(self, stream, obj, focal_point):
+        x = obj.get_coordinates()[0]
+        y = obj.get_coordinates()[0]
+        w = obj.get_coordinates()[1]
+        h = obj.get_coordinates()[1]
+        if(focal_point[0] >= x and 
+        focal_point[0] <= w and 
+        focal_point[1] > y and 
+        focal_point[1] < h):
+            return True
+        
         return False
 
 
-    def check_violations(self):
-        distance_violation = self.check_distance_violation()
-        boundary_violation = self.check_boundary_violation()
-
-
-
-    def plot_object_boundaries(self):
-        cv2.rectangle(self.capture, self.boundaries[0], self.boundaries[1], (85,51,255),10,1)
+    def check_violations(self, stream):
+        distance_violation = self.check_distance_violation(stream)
+        boundary_violation = self.check_boundary_violation(stream)
