@@ -7,7 +7,7 @@ import digitalio
 import serial
 import string
 import pynmea2
-from datetime import datetime
+import datetime
 import RPi.GPIO as GPIO
 from PIL import Image, ImageDraw, ImageFont
 import adafruit_ssd1306
@@ -32,6 +32,7 @@ def setup():
     global WIDTH
     global HEIGHT
     global current_time
+    global TIME_END
     
     global DEBUG
     global DEBUG_LOGGING
@@ -52,8 +53,8 @@ def setup():
     DEBUG_LOGGING = True
     ENABLE_LOGGING = False 
     
-    ser_1 = serial.Serial("/dev/ttyAMA0")
-    ser_3 = serial.Serial("/dev/ttyACM0")
+    ser_1 = serial.Serial("/dev/ttyAMA0",9600)
+    ser_3 = serial.Serial("/dev/ttyACM0",9600)
     
     DEBUG_LOC = "/home/jeremiahye/Desktop/GPS_Test/testData/debug"
     GPSDATA_LOC = "/home/jeremiahye/Desktop/GPS_Test/testData/gpsdata"
@@ -84,8 +85,7 @@ def oled_display(line_1='default line 1', line_2='default line 2', line_3='defau
     oled.show()
     
     
-def parse_nmea(log_data):
-    
+def parse_nmea(log_data):   
     newmsg=pynmea2.parse(log_data)
     if not str(newmsg.lat):
         gps_lat = str(newmsg.latitude)
@@ -103,7 +103,7 @@ def log_file(nmea_sentence,source_num):
             file.write(nmea_sentence)
             file.close()
             
-        if nmea_sentence[0:6] == "$GNGGA" and source_num == 1:
+        if nmea_sentence[0:6] == "$GNGGA" or nmea_sentence[0:6] == "$GPGGA":
             print(nmea_sentence)
 
 def main():
@@ -111,32 +111,46 @@ def main():
     global data_form
     global prev_state 
     while True:
-        #dataout = pynmea2.NMEAStreamReader()
-        try:
-            newdata_1=ser_1.readline().decode('unicode_escape')
-            newdata_3=ser_3.readline().decode('unicode_escape')
-        except:
-            print("Serial Exception")
-            print(newdata_1)
-        
+        #dataout = pynmea2.NMEAStreamReader() 
         if GPIO.input(toggle_gps) == 1:
             GPIO.wait_for_edge(toggle_gps, GPIO.FALLING)
             ENABLE_LOGGING = not ENABLE_LOGGING
+            if ENABLE_LOGGING == True:
+                ser_1.reset_input_buffer()
+                ser_3.reset_input_buffer()
+                TIME_END = time.time() + 3600
+                now = datetime.datetime.now((datetime.timezone.utc))
+                current_time = now.strftime("%H:%M:%S")
+                print("Current Time: " +current_time+ " Time End: " +time.asctime(time.localtime((TIME_END))))
+                with open(DEBUG_LOC+ "_x.csv", "a") as file:
+                    file.write("Current Time:" +current_time)
+                    file.close()
         
         if ENABLE_LOGGING == True:
-            log_file(newdata_1,1)
-            log_file(newdata_3,3)
-
-            now = datetime.now()
+            while ser_1.in_waiting > 0:
+                newdata_1=ser_1.readline().decode('unicode_escape')
+                log_file(newdata_1,1)
+            while ser_3.in_waiting > 0:
+                newdata_3=ser_3.readline().decode('unicode_escape')
+                log_file(newdata_3,3)
+   
+            if loading_bar.count('|') < 20:
+                loading_bar.append('|')
+            else:
+                loading_bar.clear()
+                
+            now = datetime.datetime.now()
             current_time = now.strftime("%H:%M:%S")
             oled_display("Writing to:","gpsdata"+str(data_form)+".csv",'['+''.join(loading_bar)+']',current_time)
-            
             prev_state = 1
+            
+            if time.time() > TIME_END:
+                ENABLE_LOGGING = False
             
         else:
             if prev_state == 1:
                 data_form += 1
-            now = datetime.now()
+            now = datetime.datetime.now()
             current_time = now.strftime("%H:%M:%S")
             oled_display('GPS Inactive','','',current_time)
             prev_state = 0
