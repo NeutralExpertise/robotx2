@@ -35,7 +35,8 @@ class Edge_Detector():
         if(self.use_trackbars):
             Thresholds.AREA_MIN = cv2.getTrackbarPos("AREA MIN", "Parameters")
             Thresholds.AREA_MAX = cv2.getTrackbarPos("AREA MAX", "Parameters")
-            Thresholds.CORNER_POINTS = cv2.getTrackbarPos("CORNER POINTS", "Parameters")
+            Thresholds.CORNER_POINTS_MIN = cv2.getTrackbarPos("CORNER POINTS MIN", "Parameters")
+            Thresholds.CORNER_POINTS_MAX = cv2.getTrackbarPos("CORNER POINTS MAX", "Parameters")
             
         max_bbox = 0
         for c in conts:
@@ -50,15 +51,17 @@ class Edge_Detector():
             # Reduce the detection so only a set size of objects can be detected
             if(cv2.contourArea(c) > Thresholds.AREA_MIN and cv2.contourArea(c) < Thresholds.AREA_MAX):
                 # The buoys usually have 8 corner points
-                if(len(approx) == Thresholds.CORNER_POINTS):
+                if(len(approx) > Thresholds.CORNER_POINTS_MIN and len(approx) < Thresholds.CORNER_POINTS_MAX):
                     # Only display a box over the object itself and ignore all the shapes detected INSIDE the object itself
                     if(h > max_bbox):
-                        bbox_coords = ((x,y), ((x+w), (y+h)))
+                        bbox_corner_pts = ((x,y), ((x+w), (y+h)))
                         self.object_handler.add_corner_data(len(approx))
-                        self.object_handler.add_coordinates_data(bbox)
+                        self.object_handler.add_coordinates_data((bbox_corner_pts[0][0], bbox_corner_pts[0][1], w, h))
+                        # self.object_handler.add_coordinates_data(bbox)
                         self.object_handler.add_boundaries()
                         self.object_handler.add_object_to_list()
                         max_bbox = h
+                        
 
     def blur(self, capture):
         return cv2.GaussianBlur(capture, (Thresholds.BLUR_KERNEL, Thresholds.BLUR_KERNEL_MAX), 1)

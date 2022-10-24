@@ -35,8 +35,9 @@ class Object():
     def set_boundaries(self):
         
             # Object Avoidance Boundaries
-            pt1 = (int(self.coordinates[0]-100), int(self.coordinates[1]-100)) # x,y
-            pt2 = (int(self.coordinates[0] + self.coordinates[2])+100, int(self.coordinates[1] + self.coordinates[3])+100) # w,h
+            pt1 = (int(self.coordinates[0]-20), int(self.coordinates[1]-20)) # x,y
+            pt2 = (int(self.coordinates[0] + self.coordinates[2])+20, int(self.coordinates[1] + self.coordinates[3])+20) # w,h
+
             self.boundaries = (pt1,pt2)
 
 

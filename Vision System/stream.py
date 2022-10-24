@@ -6,7 +6,7 @@ from stream_types import Stream_Types
 
 class Stream(Stream_Settings):
 
-    def __init__(self, detector, tracker, position_handler, plot_focal_point=False,
+    def __init__(self, detector, tracker=None, position_handler=None, plot_focal_point=False,
     plot_focal_point_link=False, plot_object_distance=False, plot_object_coordinates=False, 
     plot_object_size=False, plot_num_object_corners=False, plot_object_colour=False, plot_object_boundaries=False, plot_focal_point_violation_reporting=False, plot_all_object_data=False):
         self.plot = []
@@ -18,7 +18,7 @@ class Stream(Stream_Settings):
             self.plot.append(self.plot_all_object_data)
         else:
             if(plot_focal_point == True):
-                self.plot(self.plot_focal_point)
+                self.plot.append(self.plot_focal_point)
             if(plot_focal_point_link == True):
                 self.plot.append(self.plot_focal_point_link)
             if(plot_object_distance == True):
@@ -77,7 +77,7 @@ class Stream(Stream_Settings):
         elif(self.stream_type == Stream_Types.VIDEO):
                 try:
                     cap = cv2.VideoCapture(self.path)
-                    cap.set(cv2.CAP_PROP_FPS, 120)
+                    cap.set(cv2.CAP_PROP_FPS, 60)
                     while True:
                         self.capture = cap.read()[1]
                         self.handle_object_detection()
@@ -96,16 +96,19 @@ class Stream(Stream_Settings):
 
 
     def handle_object_detection(self):
-            self.detector.detect(self.capture)
-            self.tracker.track(self.capture)
-            for object in self.detector.object_handler.get_objects():
-                if(len(object.get_coordinates()) != 0):
-                    x = object.get_coordinates()[0]
-                    y = object.get_coordinates()[1]
-                    w = object.get_coordinates()[2]
-                    h = object.get_coordinates()[3]
-                    center = (int(x+w/2),int(y+h/2))
-                    object.calculate_distance(x, self.get_focal_point_coords()[0])
+            if(self.detector != None):
+                self.detector.detect(self.capture)
+                for object in self.detector.object_handler.get_objects():
+                    if(len(object.get_coordinates()) != 0):
+                        x = object.get_coordinates()[0]
+                        y = object.get_coordinates()[1]
+                        w = object.get_coordinates()[2]
+                        h = object.get_coordinates()[3]
+                        center = (int(x+50),int(y+100))
+                        object.calculate_distance(center[0], self.get_focal_point_coords()[0])
+            if(self.tracker != None):
+                self.tracker.track(self.capture)
+            
 
 
 
@@ -131,6 +134,7 @@ class Stream(Stream_Settings):
                 cv2.line(self.capture, (center), (self.get_focal_point_coords()), (255,0,255), 2)
 
 
+
     def plot_object_distance(self):
         for object in self.detector.object_handler.get_objects():
             if(len(object.get_coordinates()) != 0):
@@ -140,14 +144,16 @@ class Stream(Stream_Settings):
                 h = object.get_coordinates()[3]
                 center = (int(x+w/2),int(y+h/2))
                 distance = object.get_distance()
-                cv2.putText(self.capture, str(distance), (center), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,0), 2)
+                bbox_corner_pts = ((x,y), ((x+w), (y+h)))
+                cv2.putText(self.capture, ((str(distance) + " units ")), (x+10,y-7), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,0), 3)
+                cv2.putText(self.capture, ((str(distance) + " units ")), (x+10,y-7), cv2.FONT_HERSHEY_COMPLEX, 0.7, (0,0,0), 2)
 
 
 
     def plot_object_boundaries(self):
             for object in self.detector.object_handler.get_objects():
                 if(len(object.get_boundaries()) != 0):
-                    cv2.rectangle(self.capture, object.get_boundaries()[0], object.get_boundaries()[1], (85,51,255),10,1)
+                    cv2.rectangle(self.capture, object.get_boundaries()[0], object.get_boundaries()[1], (85,51,255),5,1)
 
 
 
@@ -161,6 +167,7 @@ class Stream(Stream_Settings):
                 h = object.get_coordinates()[3]
                 cv2.putText(self.capture, "x: " + str(x), (x + w + 20, y + 100), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,255), 2)
                 cv2.putText(self.capture, "y: " + str(y), (x + w + 20, y + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,255), 2)
+                cv2.rectangle(self.capture, (x, y), (x+w, y+h), (255,255,255),3,1)
 
 
     def plot_object_size(self):
@@ -188,7 +195,6 @@ class Stream(Stream_Settings):
 
     
     def plot_focal_point_violation_reporting(self):
-        
         if(len(self.detector.object_handler.get_objects()) > 0):
             # Distance violation detection
             if(len(self.detector.object_handler.get_objects()) >= 2):
@@ -206,8 +212,8 @@ class Stream(Stream_Settings):
             # Boundary Violation Detection
             for object in self.detector.object_handler.get_objects():
                 if(self.position_handler.check_boundary_violation(self.capture, object, self.get_focal_point_coords()) == True):
-                    cv2.putText(self.capture, "BOUNDARY VIOLATION ", (200, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,0), 10)
-                    cv2.putText(self.capture, "BOUNDARY VIOLATION ", (200, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)
+                    cv2.putText(self.capture, "BOUNDARY VIOLATION ", (200, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,0), 10)
+                    cv2.putText(self.capture, "BOUNDARY VIOLATION ", (200, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)
 
                 else:
                     cv2.putText(self.capture, "", (object.get_coordinates()[0], object.get_coordinates()[1]-10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 10)
@@ -227,4 +233,4 @@ class Stream(Stream_Settings):
         self.plot_num_object_corners()
         self.plot_object_size()
         self.plot_object_boundaries()
-        self.plot_focal_point_violation_reporting
+        self.plot_focal_point_violation_reporting()

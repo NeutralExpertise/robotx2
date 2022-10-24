@@ -15,7 +15,6 @@ def main():
     # Add duplicate checking (because there may be race conditions)
     # Add colour based tracking bboxes
         # Detect the center pixel, this should be enough to determine what threshold it sits within (therefore we can then pass the message of the detected black buoy)
-    # Change masks to consider greater range of colours
     # Add conditions to send to object handler to determine colour
     # Integrate with message system
         # Send message when black buoy has been identified
@@ -28,7 +27,10 @@ def main():
         # (If one distance is smaller than the other)
 
 
+    # Identify which gate, gate 1 is (red, white), gate 2 is (white white), gate 3 is (white, green)
 
+    # Add link between objects
+    # Need to check for 2 closest distances
 
     object_handler = Object_Handler()
     object_detector = Object_Detector(object_handler)
@@ -40,12 +42,12 @@ def main():
 
 
 
-
-    stream = Stream(object_detector, object_tracker, position_handler, plot_all_object_data=True)
-    stream.set_file_path("Resources/ocean-buoys.jpg")
-    stream.set_stream_type(Stream_Types.IMAGE)
+    stream = Stream(object_detector, tracker=None, position_handler=position_handler, plot_all_object_data=True)
+    stream.set_file_path("Resources/robotx2.mp4")
+    # stream.set_file_path("Resources/ocean-buoys.jpg")
+    stream.set_stream_type(Stream_Types.VIDEO)
     stream.set_camera(0)
-    # stream.add_trackbars() # - For Testing Only
+    stream.add_trackbars() # - For Testing Only
 
 
     stream.start()

@@ -49,8 +49,8 @@ class Colour_Detector():
   
 
     def detect(self, capture):
-        # result = self.remove_glare(capture)
-        # result = self.remove_shadows(result)
+        # capture = self.remove_glare(capture)
+        # capture = self.remove_shadows(capture)
         hsv = cv2.cvtColor(capture, cv2.COLOR_BGR2HSV)
 
         if(self.use_trackbars):

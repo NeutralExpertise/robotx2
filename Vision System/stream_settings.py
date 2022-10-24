@@ -45,7 +45,7 @@ class Stream_Settings:
         '''FOR TESTING PURPOSES ONLY'''
     def add_trackbars(self):
         cv2.namedWindow("Parameters")
-        cv2.resizeWindow("Parameters", 1500, 1000)
+        cv2.resizeWindow("Parameters", 1000, 500)
         cv2.createTrackbar("EDGE THRESHOLD1", "Parameters", Thresholds.EDGE_THRESHOLD1, Thresholds.EDGE_THRESHOLD2, self.on_value_change) # 255
         cv2.createTrackbar("EDGE THRESHOLD2", "Parameters", Thresholds.EDGE_THRESHOLD2, Thresholds.EDGE_THRESHOLD2, self.on_value_change) # 139
 
@@ -63,8 +63,8 @@ class Stream_Settings:
         cv2.createTrackbar("DILATION", "Parameters", Thresholds.DILATION, Thresholds.DILATION_MAX, self.on_value_change)
         cv2.createTrackbar("EROSION", "Parameters", Thresholds.EROSION, Thresholds.EROSION_MAX, self.on_value_change)
 
-        cv2.createTrackbar("CONTOURS", "Parameters", 0, 100, self.on_value_change)
-        cv2.createTrackbar("CORNER POINTS", "Parameters", 0, Thresholds.CORNER_POINTS, self.on_value_change)
+        cv2.createTrackbar("CORNER POINTS MIN", "Parameters", Thresholds.CORNER_POINTS_MIN, Thresholds.CORNER_POINTS_MAX, self.on_value_change)
+        cv2.createTrackbar("CORNER POINTS MAX", "Parameters", Thresholds.CORNER_POINTS_MAX, Thresholds.CORNER_POINTS_MAX, self.on_value_change)
 
 
     '''FOR TESTING PURPOSES ONLY'''
