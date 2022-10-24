@@ -25,6 +25,8 @@ def parse_nmea(gps_data,nmea_sentence):
 
 def transmit(gps_data):
     #send data to CAN-Bus
+    #transformed_data = transform_into_CAN_Data(gps_data)
+    #canlibrary.send(transformed_data)
 
 def main():
     LOG_LOCATION = ""
