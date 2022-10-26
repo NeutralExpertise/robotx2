@@ -31,16 +31,14 @@ class Thresholds:
     BLUR_KERNEL_MAX = 5
 
     CORNER_POINTS_MIN = 5
-    CORNER_POINTS_MAX = 10
+    CORNER_POINTS_MAX = 9
 
     RESOLUTION_HEIGHT = resolution["height"]
     RESOLUTION_WIDTH = resolution["width"]
 
 
 
-    # RED_LOWER = np.array([0, 1, 0])
-    # RED_UPPER = np.array([13,255, 255])
-    RED_LOWER = np.array([170, 130, 80]) # H 178?
+    RED_LOWER = np.array([170, 130, 80])
     RED_UPPER = np.array([255,255, 255])
 
     ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''

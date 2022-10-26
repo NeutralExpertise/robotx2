@@ -22,7 +22,6 @@ class Object_Tracker(Stream_Settings):
     def track(self, capture):
 
         
-        # Add duplication checking code here
         
         # Update the tracker to track the new location of the object
         success, bboxes = self.tracker.update(capture)
