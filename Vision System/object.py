@@ -1,14 +1,16 @@
 import cv2
+
+from thresholds import Thresholds
 '''Object Class
 # Gets updated as each detector returns their related information, for example colour detector will update the object's colour
 
 '''
-class Object():
+class Object:
     def __init__(self):
         self.coordinates = ()
         self.boundaries = ()
         self.distance = 0
-        self.colour = []
+        self.colour = ()
         self.corners = 0
 
     def set_num_corners(self, corners):
