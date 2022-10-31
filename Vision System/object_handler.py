@@ -6,11 +6,8 @@ class Object_Handler:
     def __init__(self):
         self.objects = []
         self.object = Object()
-        self.colour_labels = {str(tuple(Thresholds.RED_LOWER)): "RED", str(tuple(Thresholds.GREEN_LOWER)): "GREEN", str(tuple(Thresholds.WHITE_LOWER)): "WHITE", 
-        str(tuple(Thresholds.BLACK_LOWER)): "BLACK"}
 
     def add_colour_data(self, colour_data):
-        self.object.colour_label = self.colour_labels[str(colour_data)]
         self.object.set_colour(colour_data)
 
     def get_colour(self):
