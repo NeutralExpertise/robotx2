@@ -7,9 +7,21 @@ class task_info:
     def __init__(self):
         self.gate_used = 0   
 
+def initialise_can():
+    global canBus
+    canBus = frc.FrcCan('can0', 'socketcan')
+
+    # Append all listeners
+    # APPEND SELF LISTENER (LISTENS TO MESSAGES SENT TO ITSELF
+    # APPEND GPS LISTENER
+    # canBus.targets.append([A, B, C])
+
 def main():
+    #Initialise can connection
+    initialise_can()
+
     While True:
-        #AWAITING CAN SIGNAL
+        #LISTENING FOR CAN SIGNAL
         #IF SIGNAL TO BEGIN TASK 2
         print("Commencing Task 2")
         task_2()

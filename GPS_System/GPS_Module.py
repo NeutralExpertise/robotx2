@@ -1,4 +1,5 @@
 import can
+import frc
 import time
 import serial
 import string
@@ -44,8 +45,8 @@ def main():
         if ENABLE_LOGGING == True:
             if newdata[0:6] in NMEA_TYPES:
                 with open(LOG_LOCATION+".csv", "a") as file:
-                file.write(newdata)
-                file.close()
+                    file.write(newdata)
+                    file.close()
             
 def destroy():
     # Release resource
