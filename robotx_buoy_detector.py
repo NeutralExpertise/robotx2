@@ -10,10 +10,12 @@ from screeninfo import get_monitors
 class RobotX_Buoy_Detector:
     def __init__(self, enable_testing=False):
         self.object_handler = Object_Handler()
-        red = ((120, 65, 0), (180,255,255)) 
+        # HUE_MIN, SAT_MIN, VAL_MIN, HUE_MAX, SAT_MAX, VAL_MAX
+        red = ((120, 65, 0), (180,255,255))  
         green = ((0, 0, 0), (85, 130, 255))
         white = ((0, 0, 180), (180, 35, 255))
         black = ((0 , 0 , 0), (180, 255, 81))
+        colours = {(red[0], red[1]) : "RED", (green[0], green[1]) : "GREEN", (white[0], white[1]) : "WHITE", (black[0], black[1]) : "BLACK" }
         self.thresholds = Thresholds()
         self.thresholds.set_edge_thresholds(0, 255)
         self.thresholds.set_area_thresholds(1000, 100000)
@@ -27,11 +29,7 @@ class RobotX_Buoy_Detector:
         self.thresholds.set_erosion_kernel(5,5)
         self.thresholds.set_dilation_kernel(13,13)
         self.thresholds.set_height(31,300)
-        self.object_detector = Object_Detector(object_handler = self.object_handler, thresholds = self.thresholds, use_trackbars=enable_testing)
-        self.object_detector.add_colour(red[0], red[1], "RED")
-        self.object_detector.add_colour(green[0], green[1], "GREEN")
-        self.object_detector.add_colour(white[0], white[1], "WHITE")
-        self.object_detector.add_colour(black[0], black[1], "BLACK")
+        self.object_detector = Object_Detector(object_handler = self.object_handler, thresholds = self.thresholds, colours_to_detect=colours, use_trackbars=enable_testing)
         self.position_handler = Position_Handler(self.object_handler)                                  
         
         self.stream = Stream(source=0, position_handler=self.position_handler, stream_type=Stream_Types.CAMERA, object_detector=self.object_detector, plot_all_object_data=True)

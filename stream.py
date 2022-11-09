@@ -75,6 +75,7 @@ class Stream(Stream_Settings):
 
             if(self.object_detector != None):
                 self.object_detector.detect(self.capture)
+                self.object_detector.detect_black_buoy(self.capture)
                 self.check_position()
                 self.display_data()
                 
@@ -99,6 +100,7 @@ class Stream(Stream_Settings):
                     h = object.get_coordinates()[3]
                     center = (int(x+50),int(y+100))
                     object.calculate_distance(center[0], self.get_focal_point_coords()[0])
+            self.object_detector.object_handler.sort_distance()
             if(self.position_handler != None):
                     self.position_handler.check_distances(self.capture, True)
                     self.position_handler.check_boundaries(self.capture, self.get_focal_point_coords(), True)

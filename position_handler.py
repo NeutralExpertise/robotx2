@@ -6,14 +6,13 @@ class Position_Handler:
         self.object_handler = object_handler
 
 
-    def get_distance(self, obj):
-        return obj.get_distance()
+
 
 
     def calculate_adjustments(self):
         if(len(self.object_handler.get_objects()) >= 2):
                 # Sort objects based on their distance
-                self.object_handler.get_objects().sort(key=self.get_distance)
+                
                 # If the x coordinate where the distance is smaller is maximum, then MOVE LEFT (We are too far right)
                 # If the x coordinate where the distance is smaller is minimum, then MVOE RIGHT (We are too far left)
                 # Re-adjust X amount of units
