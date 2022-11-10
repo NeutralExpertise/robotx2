@@ -15,6 +15,7 @@ class Stream(Stream_Settings):
         self.plot = []
         self.object_detector = object_detector
         self.position_handler = position_handler
+        self.is_active = False
 
 
 
@@ -38,11 +39,11 @@ class Stream(Stream_Settings):
             if(plot_object_boundaries == True):
                 self.plot.append(self.plot_object_boundaries)
 
-        
-        
+      
 
 
     def start(self):
+        self.is_active = True
         self.position_handler.is_past_gate = False
         # Clear output
         # for windows
@@ -84,12 +85,14 @@ class Stream(Stream_Settings):
             
 
             cv2.imshow("STREAM", self.capture)
-            if cv2.waitKey(1) and keyboard.is_pressed('q'):
+            if cv2.waitKey(1) and self.is_active == False:
                 break
             self.object_detector.object_handler.clear_list()
             
            
-            
+    def stop_stream(self):
+        self.is_active == False
+        cv2.destroyAllWindows()      
             
     
     def check_position(self):
