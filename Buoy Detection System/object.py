@@ -10,12 +10,17 @@ class Object:
         self.distance = 0
         self.colour = ()
         self.corners = 0
+        self.area = 0
 
-    def set_num_corners(self, corners):
+
+    def set_area(self, new_area):
+        self.area = new_area
+
+    def set_corners(self, corners):
         self.corners = corners
 
 
-    def get_num_corners(self):
+    def get_corners(self):
         return self.corners
 
 
@@ -46,8 +51,8 @@ class Object:
 
 
     def calculate_distance(self, p1,p2):
-        self.distance = int(((p2 - p1) ** 2 + (p2 - p1) ** 2) ** 0.5)
-
+        distance = self.distance = int(((p2 - p1) ** 2 + (p2 - p1) ** 2) ** 0.5)
+        return self.distance
 
     def get_distance(self):
         return self.distance

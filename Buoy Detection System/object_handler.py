@@ -6,19 +6,19 @@ class Object_Handler:
         self.objects = []
         self.object = Object()
 
-    def add_colour_data(self, colour_data):
+    def add_colour(self, colour_data):
         self.object.set_colour(colour_data)
 
     def get_colour(self):
         return self.object.get_colour()
 
-    def add_corner_data(self, corner_data):
+    def add_corners(self, corner_data):
         self.object.corners = corner_data
 
-    def get_corner_data(self):
-        return self.object.get_num_corners()
+    def get_corners(self):
+        return self.object.get_corners()
 
-    def add_coordinates_data(self, coordinate_data):
+    def add_coordinates(self, coordinate_data):
         self.object.coordinates = coordinate_data
 
     def get_coordinates(self):
@@ -27,6 +27,11 @@ class Object_Handler:
     def add_object_to_list(self):
         self.objects.append(self.object)
         self.object = Object()
+
+
+    def add_area(self, area_data):
+        self.object.area = area_data
+
 
 
     def clear_list(self):
@@ -42,7 +47,7 @@ class Object_Handler:
         return self.object.get_distance()
 
     def calculate_distance(self, start, end):
-        self.object.calculate_distance(start, end)
+        return self.object.calculate_distance(start, end)
 
     def add_boundaries(self):
         self.object.set_boundaries()

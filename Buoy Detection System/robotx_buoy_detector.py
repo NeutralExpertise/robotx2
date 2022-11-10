@@ -34,6 +34,7 @@ class RobotX_Buoy_Detector:
         
         self.stream = Stream(source=0, position_handler=self.position_handler, stream_type=Stream_Types.CAMERA, object_detector=self.object_detector, plot_all_object_data=True)
         source = "Resources/boundary_violation.png"
+        source = 0
         self.stream.set_source(source) # Set to 0 to use camera
-        self.stream.set_stream_type(Stream_Types.IMAGE)
+        self.stream.set_stream_type(Stream_Types.CAMERA)
         self.stream.set_resolution(get_monitors()[0].y, get_monitors()[0].x, get_monitors()[0].height, get_monitors()[0].width)

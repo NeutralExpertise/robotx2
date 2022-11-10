@@ -69,7 +69,7 @@ class Object_Detector:
         return cv2.dilate(capture, kernel, iterations=self.thresholds.EROSION_ITERATIONS_MIN)
 
 
-    def detect(self, capture):
+    def detect(self, capture, focal_point):
         if(self.use_trackbars):                
             self.thresholds.HUE_MIN = cv2.getTrackbarPos("HUE MIN", "Parameters")
             self.thresholds.SAT_MIN = cv2.getTrackbarPos("SAT MIN", "Parameters")
@@ -146,11 +146,23 @@ class Object_Detector:
                     if(cv2.contourArea(c) > self.thresholds.AREA_MIN and cv2.contourArea(c) < self.thresholds.AREA_MAX):
                         colour = masks[mask][1]
                         bbox_corner_pts = ((x,y), ((x+w), (y+h)))
-                        self.object_handler.add_corner_data(len(approx))
-                        self.object_handler.add_coordinates_data((bbox_corner_pts[0][0], bbox_corner_pts[0][1], w, h))
+                        x = bbox_corner_pts[0][0]
+                        y = bbox_corner_pts[0][1]
+                        self.object_handler.add_corners(len(approx))
+                        self.object_handler.add_coordinates((bbox_corner_pts[0][0], bbox_corner_pts[0][1], w, h))
                         self.object_handler.add_boundaries()
-                        self.object_handler.add_colour_data(colour)
-                        self.object_handler.add_object_to_list()
+                        self.object_handler.add_colour(colour)
+                        center = (int(x+50),int(y+100))
+                        distance = self.object_handler.calculate_distance(center[0], focal_point[0])
+                        # Duplication check
+                        obj_already_detected = False
+                        for obj in self.object_handler.get_objects():
+                            if(obj.get_colour() == colour and obj.get_distance() == distance):
+                                obj_already_detected = True
+                                
+                                break
+                        if(obj_already_detected == False):
+                            self.object_handler.add_object_to_list()
                         max_bbox = h
             
                 

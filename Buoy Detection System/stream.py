@@ -76,7 +76,7 @@ class Stream(Stream_Settings):
                 self.capture = cap.read()[1]
 
             if(self.object_detector != None):
-                self.object_detector.detect(self.capture)
+                self.object_detector.detect(self.capture, self.get_focal_point_coords())
                 self.check_position()
                 self.display_data()
                 
@@ -93,15 +93,6 @@ class Stream(Stream_Settings):
             
     
     def check_position(self):
-        if(self.object_detector != None):
-            for object in self.object_detector.object_handler.get_objects():
-                if(len(object.get_coordinates()) != 0):
-                    x = object.get_coordinates()[0]
-                    y = object.get_coordinates()[1]
-                    w = object.get_coordinates()[2]
-                    h = object.get_coordinates()[3]
-                    center = (int(x+50),int(y+100))
-                    object.calculate_distance(center[0], self.get_focal_point_coords()[0])
             if(self.position_handler != None):
                     self.position_handler.check_distances(self.get_focal_point_coords())
                     if(self.position_handler.is_past_gate == False):
@@ -198,7 +189,7 @@ class Stream(Stream_Settings):
                 w = object.get_coordinates()[2]
                 h = object.get_coordinates()[3]
                 center = (int(x+w/2),int(y+h/2))
-                cv2.putText(self.capture, "Points: " + str(object.get_num_corners()), (x + w + 20, y + 20), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,255), 2)
+                cv2.putText(self.capture, "Points: " + str(object.get_corners()), (x + w + 20, y + 20), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,255), 2)
 
 
 

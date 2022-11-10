@@ -46,6 +46,7 @@ class Position_Handler:
     '''
     def adjust_position(self, focal_point):
         self.sort_distance()
+       
         # Forward
         x = 0
         y = 1
