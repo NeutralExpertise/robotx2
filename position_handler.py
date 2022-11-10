@@ -33,9 +33,8 @@ class Position_Handler:
 
 
     def move(self, x,y,power):
-        # self.navigation.align_heading()
-        # self.navigation.move_boat(x,y,power)
-        print(f"{x} {y} {power}")
+        self.navigation.align_heading()
+        self.navigation.move_boat(x,y,power)
             
 
     '''Determines whether the boat needs readjustment
