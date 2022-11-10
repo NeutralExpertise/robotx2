@@ -28,13 +28,6 @@ class Object_Handler:
         self.objects.append(self.object)
         self.object = Object()
 
-    def get_distance_key(self, obj):
-        return obj.get_distance()
-
-
-    def sort_distance(self):
-        self.objects.sort(key=self.get_distance_key)
-
 
     def clear_list(self):
         self.objects.clear()

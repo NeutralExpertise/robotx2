@@ -17,6 +17,7 @@ class Stream(Stream_Settings):
         self.position_handler = position_handler
 
 
+
         if(plot_all_object_data == True):
             self.plot.append(self.plot_all_object_data)
         else:
@@ -42,6 +43,7 @@ class Stream(Stream_Settings):
 
 
     def start(self):
+        self.position_handler.is_past_gate = False
         # Clear output
         # for windows
         
@@ -75,7 +77,6 @@ class Stream(Stream_Settings):
 
             if(self.object_detector != None):
                 self.object_detector.detect(self.capture)
-                self.object_detector.detect_black_buoy(self.capture)
                 self.check_position()
                 self.display_data()
                 
@@ -86,6 +87,7 @@ class Stream(Stream_Settings):
             if cv2.waitKey(1) and keyboard.is_pressed('q'):
                 break
             self.object_detector.object_handler.clear_list()
+            
            
             
             
@@ -100,10 +102,12 @@ class Stream(Stream_Settings):
                     h = object.get_coordinates()[3]
                     center = (int(x+50),int(y+100))
                     object.calculate_distance(center[0], self.get_focal_point_coords()[0])
-            self.object_detector.object_handler.sort_distance()
             if(self.position_handler != None):
-                    self.position_handler.check_distances(self.capture, True)
-                    self.position_handler.check_boundaries(self.capture, self.get_focal_point_coords(), True)
+                    self.position_handler.check_distances(self.get_focal_point_coords())
+                    if(self.position_handler.is_past_gate == False):
+                        self.position_handler.check_boundaries(self.get_focal_point_coords())
+                    
+                    
         
             
 
