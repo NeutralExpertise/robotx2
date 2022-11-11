@@ -53,6 +53,14 @@ def get_distance_between(lat1, lon1, lat2, lon2):
     return c * 6371 * 1000
 
 
+def get_heading():
+    """
+    Gets current heading from the CAN bus and returns it
+    """
+    current_heading = 0
+    return current_heading
+
+
 def move_boat(x, y, rotation, power):
     """"
     Function used to perform general movement actions
@@ -104,7 +112,7 @@ def align_heading(target_heading=0.0):
     if target_heading < 0:
         target_heading = 360 - abs(target_heading)
     # Get heading
-    current_heading = 0
+    current_heading = get_heading()
 
     # Repeat until boat is at target heading (within tolerance)
     while not (target_heading - TOLERANCE_ROTATIONAL < current_heading < target_heading + TOLERANCE_ROTATIONAL):
