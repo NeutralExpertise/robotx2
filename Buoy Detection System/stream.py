@@ -44,7 +44,9 @@ class Stream(Stream_Settings):
 
     def start(self):
         self.is_active = True
-        self.position_handler.is_past_gate = False
+        self.position_handler.shutdown = False
+        self.position_handler.detect_black_buoy = False
+        self.position_handler.gate = 0
         # Clear output
         # for windows
         
@@ -77,9 +79,12 @@ class Stream(Stream_Settings):
                 self.capture = cap.read()[1]
 
             if(self.object_detector != None):
-                self.object_detector.detect(self.capture, self.get_focal_point_coords())
-                self.check_position()
-                self.display_data()
+                if(self.position_handler.shutdown == False):
+                    self.object_detector.detect(self.capture, self.get_focal_point_coords())
+                    self.check_position()
+                    self.display_data()
+                else:
+                    self.stop_stream()
                 
 
             
@@ -98,7 +103,7 @@ class Stream(Stream_Settings):
     def check_position(self):
             if(self.position_handler != None):
                     self.position_handler.check_distances(self.get_focal_point_coords())
-                    if(self.position_handler.is_past_gate == False):
+                    if(self.position_handler.detect_black_buoy == False):
                         self.position_handler.check_boundaries(self.get_focal_point_coords())
                     
                     
