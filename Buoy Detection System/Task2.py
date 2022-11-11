@@ -28,14 +28,14 @@ def main():
         # LISTENING FOR CAN SIGNAL
         # IF SIGNAL TO BEGIN TASK 2
         print("Commencing Task 2")
-        task_2()
+        enter_course()
 
         # IF SIGNAL TO COMPLETE COURSE
         print("Commencing course exit")
         exit_course()
 
 
-def task_2():
+def enter_course():
     waypoint_1 = [0, 0]
     waypoint_2 = [0, 0]
     waypoint_3 = [0, 0]
