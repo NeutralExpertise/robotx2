@@ -3,18 +3,17 @@ import frc
 import math
 from math import radians, cos, sin, asin, sqrt
 
+TOLERANCE_ROTATIONAL = 0.5  # 0.5 degrees
+TOLERANCE_DISTANCE = 0.00001  # 2.22 meters
 
-TOLERANCE_ROTATIONAL = 0.5      # 0.5 degrees
-TOLERANCE_DISTANCE = 0.00001    # 2.22 meters
 
 def initialise_can():
     global canBus
     canBus = frc.FrcCan('can0', 'socketcan')
-
-    # APPEND SELF LISTENER (LISTENS TO MESSAGES SENT TO ITSELF
-    # APPEND GPS LISTENER
-    # canBus.targets.append([14, 8, 0])
-    # canBus.targets.append([14, 8, 0])
+    # GPS Listener
+    canBus.targets.append([14, 8, 2])
+    # Gate Movement Listener
+    canBus.targets.append([20, 8, 1])
 
 
 def get_location():
@@ -40,16 +39,16 @@ def get_distance_between(lat1, lon1, lat2, lon2):
     a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
     c = 2 * asin(sqrt(a))
 
-    # calculate the result
-    return c * 6371
+    # Return the result (in meters)
+    return c * 6371 * 1000
 
 
 def move_boat(x, y, rotation, power):
     """"
     Function used to perform general movement actions
     """
-    canBus.sendMessage(a, b, c, d, e, canBus.moveCAN.generateData())
-    # return true
+    data = canBus.movePosition.generateCANData(x, y, rotation, power)
+    canBus.sendMessageWithData(20, 8, 4, 0, 1, data)
 
 
 def move_boat_to_coordinate(target_lat, target_lon):
@@ -61,7 +60,7 @@ def move_boat_to_coordinate(target_lat, target_lon):
     current_lon = canBus.gpsLocation.longtitude
 
     # Repeat until boat is at target coordinates (within tolerance)
-    while not (target_lat - TOLERANCE_DISTANCE < current_lat < target_lat + TOLERANCE_DISTANCE ) and \
+    while not (target_lat - TOLERANCE_DISTANCE < current_lat < target_lat + TOLERANCE_DISTANCE) and \
             (target_lon - TOLERANCE_DISTANCE < current_lon < target_lon + TOLERANCE_DISTANCE):
         current_lat = canBus.gpsLocation.latitude
         current_lon = canBus.gpsLocation.longtitude
@@ -91,6 +90,7 @@ def align_heading(target_heading=0.0):
     Function used to hold the boat in a specific heading.
     NOTE: REQUIRES TOLERANCE LEVEL FOR ADJUSTMENTS TO STOP
     """
+    # Just a quirk of using atan2() - Degree is rendered positive till 180, then counts negatively backwards.
     if target_heading < 0:
         target_heading = 360 - abs(target_heading)
     # Get heading
@@ -100,7 +100,6 @@ def align_heading(target_heading=0.0):
     while not (target_heading - TOLERANCE_ROTATIONAL < current_heading < target_heading + TOLERANCE_ROTATIONAL):
         # Basic implementation that only turns boat clockwise
         move_boat(0, 0, 1, 0.1)
-    # return true
 
 
 def hold_position():
@@ -110,3 +109,10 @@ def hold_position():
     hold_lat = canBus.gpsLocation.latitude
     hold_lon = canBus.gpsLocation.longtitude
     move_boat_to_coordinate(hold_lat, hold_lon)
+
+def stop():
+    """
+    Stops all movement
+    """
+    # Need listener to function
+    move_boat(0,0,0,0)
