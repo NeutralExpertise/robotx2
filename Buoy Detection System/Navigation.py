@@ -1,3 +1,13 @@
+#!/usr/bin/python3
+
+# File: Navigation.py
+# Author: Jeremiah Ye
+# EmailID: yeyjb001@mymail.unisa.edu.au
+
+# Description:  This program contains the necessary movement commands to be used in the execution of Task 2.
+#               It listens to the GPS module, the Nav Module (for heading), and itself on the CAN Bus.
+#               Tolerance values (how close the program needs to run to its parameters) can be adjusted at the top.
+
 import can
 import frc
 import math

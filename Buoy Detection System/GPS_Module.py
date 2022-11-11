@@ -1,3 +1,13 @@
+#!/usr/bin/python3
+
+# File: GPS_Module.py
+# Author: Jeremiah Ye
+# EmailID: yeyjb001@mymail.unisa.edu.au
+
+# Description:  This program gets the serial output from the GPS module and converts it into decimal degrees and then
+#               transmits it across the CAN bus. It listens to itself on the CAN Bus.
+#               Log location and captured NMEA sentence type can be adjusted.
+
 import can
 import frc
 import time

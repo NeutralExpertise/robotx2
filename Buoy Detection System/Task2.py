@@ -1,7 +1,7 @@
-# #import can
-# #import GPS_MODULE
-# #import VISION_SYSTEM
-# #import HEARTBEAT_MONITOR
+import can
+import GPS_Module
+from robotx_buoy_detector import RobotX_Buoy_Detector
+#import HEARTBEAT_MONITOR
 
 # class task_info:
 #     def __init__(self):
