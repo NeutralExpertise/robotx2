@@ -26,6 +26,7 @@ time.sleep(0.1)
 
 canBus = frc.FrcCan('can0', 'socketcan');
 canBus.targets.append([14,8,0]);
+canBus.targets.append([12,2,0]);
 
 print('Ready')
 
@@ -36,6 +37,7 @@ try:
         print(canBus.gpsPosition.latitude)
         print("Longitude:", end='\t')
         print(canBus.gpsPosition.longitude)
+        print(canBus.weatherReport.windSpeed)
 
 except KeyboardInterrupt:
     #Catch keyboard interrupt
