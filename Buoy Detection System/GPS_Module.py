@@ -10,8 +10,8 @@ class GPS_Data:
     def __init__(self):
         self.lat = 0
         self.lon = 0
-        #self.sat_using = 0
-        #self.pdop = 0
+        # self.sat_using = 0
+        # self.pdop = 0
     
 def parse_nmea(gps_data,nmea_sentence):   
     if nmea_sentence[0:6] == "$GPRMC":
@@ -39,14 +39,22 @@ def main():
     current_data = GPS_Data()
 
     while True:
-        newdata=ser.readline().decode('unicode_escape')
-        parse_nmea(current_data,newdata)
+        try:
+            new_data = ser.readline().decode('unicode_escape')
+            parse_nmea(current_data,new_data)
+        except pynmea2.ParseError:
+            new_data = ''
+        except pynmea2.SentenceTypeError:
+            new_data = ''
+        except pynmea2.ChecksumError:
+            new_data = ''
+
         transmit(current_data)
-        
+
         if ENABLE_LOGGING == True:
-            if newdata[0:6] in NMEA_TYPES:
+            if new_data[0:6] in NMEA_TYPES:
                 with open(LOG_LOCATION+".csv", "a") as file:
-                    file.write(newdata)
+                    file.write(new_data)
                     file.close()
 
 # If run this script directly, do:
