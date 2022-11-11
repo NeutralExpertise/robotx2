@@ -86,23 +86,20 @@ def move_boat_to_coordinate(target_lat, target_lon):
         move_boat(0, 1, 0, power_scaling)
 
 
-def align_heading(target_heading=0.00):
+def align_heading(target_heading=0.0):
     """
     Function used to hold the boat in a specific heading.
     NOTE: REQUIRES TOLERANCE LEVEL FOR ADJUSTMENTS TO STOP
     """
+    if target_heading < 0:
+        target_heading = 360 - abs(target_heading)
     # Get heading
     current_heading = 0
 
     # Repeat until boat is at target heading (within tolerance)
     while not (target_heading - TOLERANCE_ROTATIONAL < current_heading < target_heading + TOLERANCE_ROTATIONAL):
-        if target_heading < 0:
-            # move counter-clockwise
-            move_boat(0, 0, -1, 0.1)
-        elif target_heading > 0:
-            # move clockwise
-            move_boat(0, 0, -1, 0.1)
-
+        # Basic implementation that only turns boat clockwise
+        move_boat(0, 0, 1, 0.1)
     # return true
 
 
@@ -113,4 +110,3 @@ def hold_position():
     hold_lat = canBus.gpsLocation.latitude
     hold_lon = canBus.gpsLocation.longtitude
     move_boat_to_coordinate(hold_lat, hold_lon)
-
