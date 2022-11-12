@@ -46,6 +46,7 @@ def enter_course():
     # ASSUMPTION: POSITIONED BETWEEN FIRST GATE
     # STEP 1- MOVE TOWARDS FIRST GATE
     # ACCESS VISION SYSTEM/GPS
+    Navigation.NORTHBOUND = Navigation.get_heading()
     buoy_detector.stream.start()
     # WHILE BOAT INCORRECT DISTANCE FROM GATE - GOTO 1
 

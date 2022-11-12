@@ -13,8 +13,9 @@ import frc
 import math
 from math import radians, cos, sin, asin, sqrt
 
-TOLERANCE_ROTATIONAL = 0.5  # 0.5 degrees
+TOLERANCE_ROTATIONAL = 1  # in degrees
 TOLERANCE_DISTANCE = 0.00001  # 2.22 meters
+NORTHBOUND = 0
 
 
 def initialise_can():
@@ -57,7 +58,7 @@ def get_heading():
     """
     Gets current heading from the CAN bus and returns it
     """
-    current_heading = 0
+    current_heading = canBus.movePosition.heading
     return current_heading
 
 
@@ -103,7 +104,7 @@ def move_boat_to_coordinate(target_lat, target_lon):
         move_boat(0, 1, 0, power_scaling)
 
 
-def align_heading(target_heading=0.0):
+def align_heading(target_heading = NORTHBOUND):
     """
     Function used to hold the boat in a specific heading.
     NOTE: REQUIRES TOLERANCE LEVEL FOR ADJUSTMENTS TO STOP
@@ -128,9 +129,10 @@ def hold_position():
     hold_lon = canBus.gpsLocation.longtitude
     move_boat_to_coordinate(hold_lat, hold_lon)
 
+
 def stop():
     """
     Stops all movement
     """
     # Need listener to function
-    move_boat(0,0,0,0)
+    move_boat(0, 0, 0, 0)
