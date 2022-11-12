@@ -181,6 +181,7 @@ class ShooterCan:
 class GateCan:
     def __init__(self):
         self.gateNumber = 0
+        self.enabled = False
 
 class MoveCan:
     def __init__(self):

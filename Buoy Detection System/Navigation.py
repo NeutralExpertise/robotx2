@@ -13,9 +13,11 @@ import frc
 import math
 from math import radians, cos, sin, asin, sqrt
 
+GPS_METER = 0.00000900900900 # decimal degree equivalent of a meter
 TOLERANCE_ROTATIONAL = 1  # in degrees
 TOLERANCE_DISTANCE = 0.00001  # 2.22 meters
 NORTHBOUND = 0
+
 
 
 def initialise_can():
@@ -106,7 +108,32 @@ def move_boat_to_coordinate(target_lat, target_lon):
         move_boat(0, 1, 0, power_scaling)
 
 
-def align_heading(target_heading = NORTHBOUND):
+def move_boat_by_distance(direction, distance):
+    current_lat = canBus.gpsLocation.latitude
+    current_lon = canBus.gpsLocation.longtitude
+    current_heading = get_heading()
+
+    if (181 <= current_heading <= 359):
+        # Facing Left - If you turn left, always + latitude
+        # Turning right, always - latitude
+        # North side meaning -latitude
+        pass
+    elif (1 <= current_heading <= 179):
+        # Facing Right - If you turn left, always - latitude
+        # Turning right, always + latitude
+        # South side meanung + latitude
+        pass
+    elif current_heading == 0:
+        # left = -lon, right = +lon
+        if direction == -1:
+            move_boat_to_coordinate(current_lat,current_lon - (distance * GPS_METER))
+        elif direction == 1:
+            move_boat_to_coordinate(current_lat, current_lon + (distance * GPS_METER))
+    elif current_heading == 180:
+        pass
+
+
+def align_heading(target_heading=NORTHBOUND):
     """
     Function used to hold the boat in a specific heading.
     NOTE: REQUIRES TOLERANCE LEVEL FOR ADJUSTMENTS TO STOP
