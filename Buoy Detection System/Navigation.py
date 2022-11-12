@@ -25,6 +25,8 @@ def initialise_can():
     canBus.targets.append([14, 8, 2])
     # Gate Movement Listener
     canBus.targets.append([20, 8, 1])
+    # Nav Module Listener
+    canBus.targets.append([20, 8, 2])
 
 
 def get_location():
