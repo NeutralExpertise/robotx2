@@ -13,11 +13,11 @@ import frc
 import math
 from math import radians, cos, sin, asin, sqrt
 
-GPS_METER = 0.00000900900900 # decimal degree equivalent of a meter
+LON_METER = 0.000010812  # latitude equivalent of a meter
+LAT_METER = 0.00000901  # longitude equivalent of a meter
 TOLERANCE_ROTATIONAL = 1  # in degrees
 TOLERANCE_DISTANCE = 0.00001  # 2.22 meters
 NORTHBOUND = 0
-
 
 
 def initialise_can():
@@ -29,6 +29,17 @@ def initialise_can():
     canBus.targets.append([20, 8, 1])
     # Nav Module Listener
     canBus.targets.append([20, 8, 2])
+
+
+def heading_calculator(current, modifier):
+    """
+    Function for performing heading arithmetic
+    """
+    new_heading = current + modifier
+    if new_heading < 0:
+        new_heading = 360 - abs(new_heading)
+
+    return new_heading
 
 
 def get_location():
@@ -109,12 +120,22 @@ def move_boat_to_coordinate(target_lat, target_lon):
 
 
 def move_boat_by_distance(direction, distance):
+    """
+    Function used to move to a specific distance left/right. Has no innate collision detection.
+    """
     current_lat = get_location()[0]
     current_lon = get_location()[1]
     current_heading = get_heading()
 
-    destination_lat = current_lat + (distance * cos(math.radians(current_heading + 90)) * GPS_METER)
-    destination_lon = current_lon + (distance * sin(math.radians(current_heading + 90)) * GPS_METER)
+    if direction == 'left':
+        destination_lat = current_lat - (distance * cos(math.radians(current_heading + 90)) * LAT_METER)
+        destination_lon = current_lon - (distance * sin(math.radians(current_heading + 90)) * LON_METER)
+        move_boat_to_coordinate(destination_lat, destination_lon)
+
+    elif direction == 'right':
+        destination_lat = current_lat + (distance * cos(math.radians(current_heading + 90)) * LAT_METER)
+        destination_lon = current_lon + (distance * sin(math.radians(current_heading + 90)) * LON_METER)
+        move_boat_to_coordinate(destination_lat, destination_lon)
 
 
 def align_heading(target_heading=NORTHBOUND):

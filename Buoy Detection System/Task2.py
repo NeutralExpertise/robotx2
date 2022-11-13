@@ -34,11 +34,11 @@ def main():
 
 
 def enter_course():
-    waypoint_1 = [0, 0]
-    waypoint_2 = [0, 0]
-    waypoint_3 = [0, 0]
-    waypoint_4 = [0, 0]
-    waypoint_5 = [0, 0]
+    # waypoint_1 = [0, 0]
+    # waypoint_2 = [0, 0]
+    # waypoint_3 = [0, 0]
+    # waypoint_4 = [0, 0]
+    # waypoint_5 = [0, 0]
     buoy_detector = RobotX_Buoy_Detector(False)  # Set to True to perform testing
 
     # ASSUMPTION: POSITIONED BETWEEN FIRST GATE
@@ -64,12 +64,14 @@ def enter_course():
 
     # ASSUMPTION - 5M FROM BLACK BUOY
     # LOOP AROUND BUOY
-    waypoint_1 = Navigation.get_location()
-    Navigation.move_boat_to_coordinate(waypoint_2[0], waypoint_2[1])
-    Navigation.move_boat_to_coordinate(waypoint_3[0], waypoint_3[1])
-    Navigation.move_boat_to_coordinate(waypoint_4[0], waypoint_4[1])
-    Navigation.move_boat_to_coordinate(waypoint_5[0], waypoint_5[1])
-    Navigation.move_boat_to_coordinate(waypoint_1[0], waypoint_1[1])
+    Navigation.align_heading(Navigation.NORTHBOUND)
+
+    Navigation.move_boat_by_distance('right', 2.5)
+    Navigation.move_boat_by_distance('left', 5)
+    Navigation.move_boat_by_distance('left', 5)
+    Navigation.move_boat_by_distance('left', 5)
+    Navigation.move_boat_by_distance('left', 2.5)
+
 
     Navigation.align_heading(Navigation.NORTHBOUND)
     # POSSIBLY REALIGN_HEADING HERE
