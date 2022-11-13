@@ -38,7 +38,7 @@ class Position_Handler:
 
     def move(self, x,y,power):
         self.navigation.align_heading()
-        self.navigation.move_boat(x,y,power)
+        self.navigation.move_boat(x,y,rotation,power)
         
 
 
@@ -61,9 +61,9 @@ class Position_Handler:
         # If the black buoy is not in view - move according to the gate we exited out of
         if(len(self.object_handler.get_objects()) == 0):
             if(self.gate == 1):
-                self.move(-1, 0, 1)
+                self.move(-1, 0, 0, 1)
             elif(self.gate == 3):
-                self.move(1,0,1)
+                self.move(1, 0, 0, 1)
         # Black buoy is in view
         else:
             obj = self.object_handler.get_objects()[0]
