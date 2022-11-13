@@ -1,10 +1,11 @@
-#
+#!/usr/bin/python3
+
 # File: multipleColourDetectionForBuoys.py
 # Author: Sitha Sinoun
 # Email ID: sinsy077@mymail.unisa.edu.au
 
-# Description: This program aims to help the RobotX boat detect 4 coloured buoys using openCV for multiple colour
-# detection, the colours being red, white, green and black.
+# Description: This a building block program that aims to help the RobotX boat detect 4 coloured buoys using openCV
+# for multiple colour detection, the colours being red, white, green and black.
 # For the RobotX boat to visualise the surrounding environment, detecting buoys and their colour in real-time will help
 # complete the task of gate identification.
 

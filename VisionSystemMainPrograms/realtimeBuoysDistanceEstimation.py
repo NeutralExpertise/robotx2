@@ -1,3 +1,13 @@
+#!/usr/bin/python3
+
+# File: realtimeBuoysDistanceEstimation.py
+# Author: Sitha Sinoun
+# EmailID: sinsy077@mymail.unisa.edu.au
+
+# Description: This a building block program that aims to help the RobotX boat perform position holding duties.  The
+# program aims to detect different coloured buoys and displays the distance in centimeters between the buoys and
+# the camera.
+
 import cv2
 import numpy as np
 
@@ -110,6 +120,7 @@ print("yellow focal length", yellow_buoy_focal_length_found)
 
 # Find distances of selected colours and displays in text in CM
 while True:
+
     ret, frame = cap.read()
     frame = cv2.resize(frame, (1080, 720))
     red_buoy_width_in_pixels = buoy_data(frame, red_lower_range, red_upper_range, 0, 0, 255)
