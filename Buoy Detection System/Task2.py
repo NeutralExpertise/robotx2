@@ -4,7 +4,6 @@ import GPS_Module
 import Navigation
 from robotx_buoy_detector import RobotX_Buoy_Detector
 
-# import HEARTBEAT_MONITOR
 
 # class task_info:
 # def __init__(self):
@@ -72,9 +71,7 @@ def enter_course():
     Navigation.move_boat_by_distance('left', 5)
     Navigation.move_boat_by_distance('left', 2.5)
 
-
-    Navigation.align_heading(Navigation.NORTHBOUND)
-    # POSSIBLY REALIGN_HEADING HERE
+    Navigation.align_heading(Navigation.heading_calculator(Navigation.NORTHBOUND, 180))
     # NOW FACING GATES AGAIN
 
 
