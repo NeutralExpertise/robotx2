@@ -24,12 +24,15 @@ def main():
     while True:
         # LISTENING FOR CAN SIGNAL
         # IF SIGNAL TO BEGIN TASK 2
-        print("Commencing Task 2")
-        enter_course()
+        if canBus.gate.enabled == 1:
+            print("Commencing Task 2")
+            enter_course()
 
-        # IF SIGNAL TO COMPLETE COURSE
-        print("Commencing course exit")
-        exit_course()
+            # IF SIGNAL TO COMPLETE COURSE
+            print("Commencing course exit")
+            exit_course()
+        else:
+            Navigation.stop()
 
 
 def enter_course():
