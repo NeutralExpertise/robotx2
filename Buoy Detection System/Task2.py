@@ -10,8 +10,6 @@ from robotx_buoy_detector import RobotX_Buoy_Detector
 # def __init__(self):
 #    self.gate_used = 0
 
-GPS_METER = 0.00000900900900
-
 
 def initialise_can():
     global canBus
@@ -73,6 +71,7 @@ def enter_course():
     Navigation.move_boat_to_coordinate(waypoint_5[0], waypoint_5[1])
     Navigation.move_boat_to_coordinate(waypoint_1[0], waypoint_1[1])
 
+    Navigation.align_heading(Navigation.NORTHBOUND)
     # POSSIBLY REALIGN_HEADING HERE
     # NOW FACING GATES AGAIN
 

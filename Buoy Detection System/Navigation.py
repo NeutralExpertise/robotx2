@@ -109,28 +109,12 @@ def move_boat_to_coordinate(target_lat, target_lon):
 
 
 def move_boat_by_distance(direction, distance):
-    current_lat = canBus.gpsLocation.latitude
-    current_lon = canBus.gpsLocation.longtitude
+    current_lat = get_location()[0]
+    current_lon = get_location()[1]
     current_heading = get_heading()
 
-    if (181 <= current_heading <= 359):
-        # Facing Left - If you turn left, always + latitude
-        # Turning right, always - latitude
-        # North side meaning -latitude
-        pass
-    elif (1 <= current_heading <= 179):
-        # Facing Right - If you turn left, always - latitude
-        # Turning right, always + latitude
-        # South side meanung + latitude
-        pass
-    elif current_heading == 0:
-        # left = -lon, right = +lon
-        if direction == -1:
-            move_boat_to_coordinate(current_lat,current_lon - (distance * GPS_METER))
-        elif direction == 1:
-            move_boat_to_coordinate(current_lat, current_lon + (distance * GPS_METER))
-    elif current_heading == 180:
-        pass
+    destination_lat = current_lat + (distance * cos(math.radians(current_heading + 90)) * GPS_METER)
+    destination_lon = current_lon + (distance * sin(math.radians(current_heading + 90)) * GPS_METER)
 
 
 def align_heading(target_heading=NORTHBOUND):
