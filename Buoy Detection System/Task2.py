@@ -5,9 +5,9 @@ import Navigation
 from robotx_buoy_detector import RobotX_Buoy_Detector
 
 
-# class task_info:
-# def __init__(self):
-#    self.gate_used = 0
+class taskInfo:
+def __init__(self):
+    self.gate_used = 0
 
 
 def initialise_can():
@@ -20,6 +20,7 @@ def initialise_can():
 def main():
     # Initialise can connection
     initialise_can()
+    task_info = taskInfo()
 
     while True:
         # LISTENING FOR CAN SIGNAL
@@ -27,6 +28,7 @@ def main():
         if canBus.gate.enabled == 1:
             print("Commencing Task 2")
             enter_course()
+
 
             # IF SIGNAL TO COMPLETE COURSE
             print("Commencing course exit")
@@ -75,6 +77,7 @@ def enter_course():
     Navigation.move_boat_by_distance('left', 2.5)
 
     Navigation.align_heading(Navigation.heading_calculator(Navigation.NORTHBOUND, 180))
+    self.task_info.gate = buoy_detector.get_gate()
     # NOW FACING GATES AGAIN
 
 
