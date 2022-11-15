@@ -125,7 +125,7 @@ def move_boat_by_distance(direction, distance):
     """
     current_lat = get_location()[0]
     current_lon = get_location()[1]
-    current_heading = get_heading()
+    current_heading = NORTHBOUND
 
     if direction == 'left':
         destination_lat = current_lat - (distance * cos(math.radians(current_heading + 90)) * LAT_METER)
@@ -155,12 +155,10 @@ def align_heading(target_heading=NORTHBOUND):
         move_boat(0, 0, 1, 0.1)
 
 
-def hold_position():
+def hold_position(hold_lat, hold_lon):
     """
     Function used to hold the boat in a specific location.
     """
-    hold_lat = canBus.gpsLocation.latitude
-    hold_lon = canBus.gpsLocation.longtitude
     move_boat_to_coordinate(hold_lat, hold_lon)
 
 

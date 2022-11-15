@@ -18,6 +18,7 @@ import datetime
 
 canBus = None
 
+
 class GPS_Data:
     def __init__(self):
         self.lat = 0
@@ -31,6 +32,9 @@ def initialise_can():
 
 
 def parse_nmea(gps_data, nmea_sentence):
+    """
+    Parses the serial NMEA data into a useable lat/lon value.
+    """
     if nmea_sentence[0:6] == "$GPRMC":
         new_msg = pynmea2.parse(nmea_sentence)
         if not str(new_msg.lat):
@@ -39,6 +43,9 @@ def parse_nmea(gps_data, nmea_sentence):
 
 
 def transmit(gps_data):
+    """
+    Transmits the parsed gps data onto the CAN bus.
+    """
     data = canBus.gpsPosition.generateCANData(gps_data.lat, gps_data.lon)
     canBus.sendMessageWithData(14, 8, 2, 0, 2, data)
 
@@ -51,7 +58,9 @@ def main():
 
     current_data = GPS_Data()
 
+    # Continually transmits GPS data
     while True:
+        # Discard anomalous serial data, primarily just a corruption of data at startup issue.
         try:
             new_data = ser.readline().decode('unicode_escape')
             parse_nmea(current_data, new_data)
