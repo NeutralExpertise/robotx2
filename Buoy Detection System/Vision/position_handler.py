@@ -1,13 +1,11 @@
-import cv2
-import Navigation
+from Navigation import Navigation
 
 
 class Position_Handler:
 
 
-    def __init__(self, object_handler, nav):
+    def __init__(self, object_handler):
         self.object_handler = object_handler
-        self.navigation = nav
         self.detect_black_buoy = False
         self.shutdown = False
         self.gate = None
@@ -38,8 +36,8 @@ class Position_Handler:
         # If gate 3 = move right
 
     def move(self, x,y,power):
-        self.navigation.align_heading()
-        self.navigation.move_boat(x,y,0,power)
+        Navigation.align_heading()
+        Navigation.move_boat(x,y,0,power)
         
 
 

@@ -1,5 +1,4 @@
 import numpy as np
-from screeninfo import get_monitors
 class Thresholds:
     
 

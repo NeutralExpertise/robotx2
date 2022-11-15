@@ -22,6 +22,7 @@ canBus = None
 
 
 def initialise_can():
+    global canBus
     canBus = frc.FrcCan('can0', 'socketcan')
     # GPS Listener
     canBus.targets.append([14, 8, 2])

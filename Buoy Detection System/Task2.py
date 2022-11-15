@@ -1,8 +1,8 @@
 import can
 import frc
-import GPS_Module
-import Navigation
-from robotx_buoy_detector import RobotX_Buoy_Detector
+from Navigation import GPS_Module
+from Navigation import Navigation
+from Vision import robotx_buoy_detector
 
 gate = 0
 canBus = None
@@ -14,7 +14,7 @@ def initialise():
     global gate
     global buoy_detector
     gate = 0
-    buoy_detector = RobotX_Buoy_Detector(False)  # Set to True to perform testing
+    buoy_detector = robotx_buoy_detector.RobotX_Buoy_Detector(False)  # Set to True to perform testing
     canBus = frc.FrcCan('can0', 'socketcan')
     # Gate Movement Listener
     canBus.targets.append([20, 8, 1])
@@ -27,7 +27,7 @@ def main():
     while True:
         # LISTENING FOR CAN SIGNAL
         # IF SIGNAL TO BEGIN TASK 2
-        if canBus.gate.enabled == 1:
+        if canBus.gate.enabled == True:
             print("Commencing Task 2")
             enter_course()
 

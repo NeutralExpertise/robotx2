@@ -1,4 +1,3 @@
-from object import Object
 from object_detector import Object_Detector
 from object_handler import Object_Handler
 from position_handler import Position_Handler
@@ -42,9 +41,8 @@ class RobotX_Buoy_Detector:
         self.thresholds.set_dilation_kernel(13,13)
         self.thresholds.set_height(31,300)
 
-
         self.object_detector = Object_Detector(object_handler = self.object_handler, thresholds = self.thresholds, colours_to_detect=colours, use_trackbars=enable_testing)
-        self.position_handler = Position_Handler(self.object_handler, 0)                                  
+        self.position_handler = Position_Handler(self.object_handler)                                  
         
         self.stream = Stream(source=0, position_handler=self.position_handler, stream_type=Stream_Types.CAMERA, 
         object_detector=self.object_detector, plot_all_object_data=True)

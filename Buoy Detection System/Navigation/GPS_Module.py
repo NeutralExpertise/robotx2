@@ -17,8 +17,9 @@ import pynmea2
 import datetime
 
 canBus = None
-
-
+gps_data = None
+lat = 0
+lon = 0
 class GPS_Data:
     def __init__(self):
         self.lat = 0
@@ -26,6 +27,9 @@ class GPS_Data:
 
 
 def initialise_can():
+    global canBus
+    global gps_data
+    gps_data = GPS_Data()
     canBus = frc.FrcCan('can0', 'socketcan')
     # GPS Listener
     canBus.targets.append([14, 8, 2])
@@ -56,7 +60,7 @@ def main():
     ser = serial.Serial('/dev/ttyACM0', 9600)
     NMEA_TYPES = ["$GPGGA", "$GNGGA", "$GPGSA", "$GNGSA", "$GPGSV", "$GPRMC"]
 
-    current_data = GPS_Data()
+    current_data = gps_data
 
     # Continually transmits GPS data
     while True:

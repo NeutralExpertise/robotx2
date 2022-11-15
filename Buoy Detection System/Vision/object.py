@@ -1,4 +1,3 @@
-import cv2
 '''Object Class
 # Gets updated as each detector returns their related information, for example colour detector will update the object's colour
 
