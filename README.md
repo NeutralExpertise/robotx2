@@ -35,7 +35,15 @@ This is the heading NORTHBOUND should be set as. Important to note that it may n
 
 **move_boat_to_coordinate()**: Loops until the boat is at the given coordinates (+/- tolerance values). Uses atan2() to determine the vector angle from the current coordinates to the target coordinates, and then aligns the boat in that direction. The distance between the current point and the target point is then calculated, and a move_boat() command is sent to the CAN bus with a *power_scaling* based on how far away the target point is. This may have to be tweaked depending on how powerful the engine actually is. 
 
-**move_boat_by_distance()**: This function is primarily used to get the boat to turn and move a specific distance left or right. It uses trigonometry to convert between polar and Cartesian coordinates. This allows it to calculate the coordinates of the target point (n) meters to its left or right regardless of its heading. It then calls the move_boat_to_coordinate() function to get there. This function allows the boat to theoretically navigate the course if all the distances between objects are known, without having to obtain the coordinates manually and moving it from coordinate to coordinate. This allows the boat to calculate the coordinates to do this:
+![atan2](img/atan2.png "atan2")
+
+**move_boat_by_distance()**: This function is primarily used to get the boat to turn and move a specific distance left or right. It uses trigonometry to convert between polar and Cartesian coordinates. This allows it to calculate the coordinates of the target point (n) meters to its left or right regardless of its heading.
+
+![polar_to_cart](img/polar_to_cart.png "polar_to_cart")
+
+**(Wikimedia Commons)**
+
+It then calls the move_boat_to_coordinate() function to get there. This function allows the boat to theoretically navigate the course if all the distances between objects are known, without having to obtain the coordinates manually and moving it from coordinate to coordinate. This allows the boat to calculate the coordinates to do this:
 
 ![movement_demo](img/move_direction.png "move_dir")
 
