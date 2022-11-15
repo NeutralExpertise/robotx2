@@ -149,8 +149,8 @@ class Stream(Stream_Settings):
                 bbox_corner_pts = ((x,y), ((x+w), (y+h)))
                 cv2.putText(self.capture, ((str(distance))), (center[0]-20, y-50), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,0), 3)
                 cv2.putText(self.capture, ((str(distance))), (center[0]-20, y-50), cv2.FONT_HERSHEY_COMPLEX, 0.7, (0,0,0), 2)
-                cv2.putText(self.capture, ("units"), (center[0]-20, y-30), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,0), 3)
-                cv2.putText(self.capture, ("units"), (center[0]-20, y-30), cv2.FONT_HERSHEY_COMPLEX, 0.7, (0,0,0), 2)
+                cv2.putText(self.capture, ("meters"), (center[0]-20, y-30), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,255,0), 3)
+                cv2.putText(self.capture, ("meters"), (center[0]-20, y-30), cv2.FONT_HERSHEY_COMPLEX, 0.7, (0,0,0), 2)
 
 
 

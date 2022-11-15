@@ -88,9 +88,16 @@ class Position_Handler:
                     power = 1
                     self.move(x,y,power)
             else:
-                self.move(0,0,0) # HOLD POSITION - We are aligned with black buoy
-                self.detect_black_buoy = False
-                self.shutdown = True
+                if(obj.get_distance() == 5):
+                    self.move(0,0,0) # HOLD POSITION - We are aligned with black buoy
+                    self.detect_black_buoy = False
+                    self.shutdown = True
+                # Too far
+                elif(obj.get_distance() > 5):
+                    self.move(0, -1, 1)
+                else:
+                    self.move(0,1,1)
+                
                 
 
             
@@ -182,10 +189,6 @@ class Position_Handler:
 
 
                 return (x,y)
-
-                            
-                    
-                   
 
         
         # If only a single buoy is detected - the other side of the gate is out of view

@@ -52,6 +52,7 @@ class Object:
 
     def calculate_distance(self, p1,p2):
         distance = self.distance = int(((p2 - p1) ** 2 + (p2 - p1) ** 2) ** 0.5)
+        distance = distance * (1/3779.527559) # Pixels to meters
         return self.distance
 
     def get_distance(self):
