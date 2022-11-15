@@ -3,7 +3,7 @@
 2. [Navigation.py](#Navigation.py)
 3. [Task2.py](#Task2.py)
 
-## GPS_Module.py
+# GPS_Module.py
 This script gets the serial output from the USB GPS module ('/dev/ttyACM0') and converts it into decimal degrees and then transmits it across the CAN bus.
 During initialisation, the possibility of corrupted text data in the first few messages exists, but exceptions are there to disregard them.
 
@@ -11,7 +11,7 @@ During initialisation, the possibility of corrupted text data in the first few m
 Relatively straightforward, should simply be constantly running on the pi.
 Log location and captured NMEA sentence type can be adjusted (mostly for capture/debugging purposes).
 
-## Navigation.py
+# Navigation.py
 This module contains the necessary movement commands to be used in the execution of Task 2. It listens to the GPS module, the Nav Module (for heading), and itself on the CAN Bus. Tolerance values (how close the program needs to run to its parameters) can be adjusted at the top.
 
 ### Noteable variables
@@ -53,7 +53,7 @@ It then calls the move_boat_to_coordinate() function to get there. This function
 
 **hold_position()**: Mostly a legacy function, not really used since the concept was largely abandoned during development. It should technically work, but has to be put in an external loop and given the coordinates of the position to hold. You can use Navigation.get_location() to get the coordinates to hold at before you start the loop.
 
-## Task2.py
+# Task2.py
 Thie script is used to carry out the logic for Task 2. Listens for a signal to begin, and then goes into enter_course(), since the discussion with client was for the boat to exit the gate immediately after, exit_course() is called immediately after. The internal logic from the flow chart is preserved in the comments. 
 
 Flow Diagram:
