@@ -4,13 +4,11 @@ import GPS_Module
 import Navigation
 from robotx_buoy_detector import RobotX_Buoy_Detector
 
-
-
-
-
 gate = 0
 canBus = None
 buoy_detector = None
+
+
 def initialise():
     global canBus
     global gate
@@ -33,13 +31,11 @@ def main():
             print("Commencing Task 2")
             enter_course()
 
-
             # IF SIGNAL TO COMPLETE COURSE
             print("Commencing course exit")
             exit_course()
         else:
             Navigation.stop()
-
 
 
 def enter_course():
@@ -48,7 +44,6 @@ def enter_course():
     # waypoint_3 = [0, 0]
     # waypoint_4 = [0, 0]
     # waypoint_5 = [0, 0]
-    
 
     # ASSUMPTION: POSITIONED BETWEEN FIRST GATE
     # STEP 1- MOVE TOWARDS FIRST GATE

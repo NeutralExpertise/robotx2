@@ -18,10 +18,10 @@ LAT_METER = 0.00000901  # longitude equivalent of a meter
 TOLERANCE_ROTATIONAL = 1  # in degrees
 TOLERANCE_DISTANCE = 0.00001  # 2.22 meters
 NORTHBOUND = 0
+canBus = None
 
 
 def initialise_can():
-    global canBus
     canBus = frc.FrcCan('can0', 'socketcan')
     # GPS Listener
     canBus.targets.append([14, 8, 2])
