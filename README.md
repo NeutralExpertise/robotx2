@@ -7,14 +7,14 @@
 This script gets the serial output from the USB GPS module ('/dev/ttyACM0') and converts it into decimal degrees and then transmits it across the CAN bus.
 During initialisation, the possibility of corrupted text data in the first few messages exists, but exceptions are there to disregard them.
 
-# Usage
+### Usage
 Relatively straightforward, should simply be constantly running on the pi.
 Log location and captured NMEA sentence type can be adjusted (mostly for capture/debugging purposes).
 
 ## Navigation.py
 This module contains the necessary movement commands to be used in the execution of Task 2. It listens to the GPS module, the Nav Module (for heading), and itself on the CAN Bus. Tolerance values (how close the program needs to run to its parameters) can be adjusted at the top.
 
-### Noteable variables:
+### Noteable variables
 **LAT/LON METER**: The GPS decimal equivalent of a meter at this part of the world. True calculation of this value is actually more complicated due to Longitude-to-meter conversion changing based on latitude, but this works in a pinch. A more advanced method using the Haversine formula is present in the get_distance_between() function. This has been calibrated to a fairly high degree of accuracy to the competition gps location.
 
 **Rotational/Distance Tolerance**: Since there is little chance for a boat to accurately stop on a dime, these values are used to give the formulas some tolernace +/- in calculations. It's hard to know exactly what's an acceptable level of tolerance for the boat to not be infinitely adjusting its position, while still remaining fairly accurate. If increased, the boat movement calculations will be less precise, but might more realistically account for the boat's dimensions/movement. However, if increased too far, will cause the calculations to be wildly inaccurate.
@@ -25,7 +25,7 @@ This is the heading NORTHBOUND should be set as. Important to note that it may n
 
 ![NORTHBOUND_DIRECTION](img/course_dir.png "course_dir")
 
-### Notes on functions:
+### Notes on functions
 
 **heading_calculator()**: Used to easily calculation addition and subtraction to heading since heading values are only from 0-360.
 
