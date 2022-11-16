@@ -8,13 +8,21 @@
 #               transmits it across the CAN bus. It listens to itself on the CAN Bus.
 #               Log location and captured NMEA sentence type can be adjusted.
 
+
+
 import can
-import frc
+
 import time
 import serial
 import string
 import pynmea2
 import datetime
+import sys
+import os
+
+sys.path.append(os.getcwd() + '/..')
+
+import frc
 
 canBus = None
 gps_data = None

@@ -10,15 +10,23 @@
 #               Heartbeat message fields contain data on GPS co-ordinates, AMS status, UAV status and the current date and time in AEDT- Sydney.
 #               Most data fields are relayed from a position on a CAN device, and accessor methods are used to display those fields.
 
+import time
+from datetime import datetime
+# pytz library allows accurate and cross timezone calculations
+from pytz import timezone
+import sys
+import os
+import can
+import socket
+
+
+sys.path.append(os.getcwd() + '/..')
+
+import frc
+
 def main():
 
-    import time
-    from datetime import datetime
-    # pytz library allows accurate and cross timezone calculations
-    from pytz import timezone
-    import frc
-    import can
-    import socket
+
 
     # instantiates a Can Bus listener
     canBus = frc.FrcCan('can0', 'socketcan');

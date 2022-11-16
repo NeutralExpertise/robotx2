@@ -9,9 +9,13 @@
 #               Tolerance values (how close the program needs to run to its parameters) can be adjusted at the top.
 
 import can
-import frc
 import math
+import sys
+import os
 from math import radians, cos, sin, asin, sqrt
+
+sys.path.append(os.getcwd() + '/..')
+import frc
 
 LON_METER = 0.000010812  # latitude equivalent of a meter
 LAT_METER = 0.00000901  # longitude equivalent of a meter

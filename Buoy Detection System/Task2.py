@@ -1,8 +1,14 @@
 import can
-import frc
 from Navigation import GPS_Module
 from Navigation import Navigation
 from Vision import robotx_buoy_detector
+import sys
+import os
+
+
+sys.path.append(os.getcwd() + '/..')
+import frc
+
 
 gate = 0
 canBus = None
